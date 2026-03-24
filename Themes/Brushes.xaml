@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Surfaces -->
+    <SolidColorBrush x:Key="Brush.Background"      Color="{StaticResource Color.Background}"/>
+    <SolidColorBrush x:Key="Brush.Surface"         Color="{StaticResource Color.Surface}"/>
+    <SolidColorBrush x:Key="Brush.SurfaceElevated" Color="{StaticResource Color.SurfaceElevated}"/>
+
+    <!-- Text -->
+    <SolidColorBrush x:Key="Brush.TextPrimary"     Color="{StaticResource Color.TextPrimary}"/>
+    <SolidColorBrush x:Key="Brush.TextSecondary"   Color="{StaticResource Color.TextSecondary}"/>
+    <SolidColorBrush x:Key="Brush.TextDisabled"    Color="{StaticResource Color.TextDisabled}"/>
+
+    <!-- Brand -->
+    <SolidColorBrush x:Key="Brush.Primary"         Color="{StaticResource Color.Primary}"/>
+    <SolidColorBrush x:Key="Brush.PrimaryHover"    Color="{StaticResource Color.PrimaryHover}"/>
+    <SolidColorBrush x:Key="Brush.Accent"          Color="{StaticResource Color.Accent}"/>
+
+    <!-- Semantic -->
+    <SolidColorBrush x:Key="Brush.Success"         Color="{StaticResource Color.Success}"/>
+    <SolidColorBrush x:Key="Brush.Warning"         Color="{StaticResource Color.Warning}"/>
+    <SolidColorBrush x:Key="Brush.Error"           Color="{StaticResource Color.Error}"/>
+
+    <!-- Chrome -->
+    <SolidColorBrush x:Key="Brush.Border"          Color="{StaticResource Color.Border}"/>
+    <SolidColorBrush x:Key="Brush.Divider"         Color="{StaticResource Color.Divider}"/>
+
+</ResourceDictionary>

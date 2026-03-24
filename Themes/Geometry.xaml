@@ -1,0 +1,26 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Corner Radii -->
+    <CornerRadius x:Key="Radius.None">0</CornerRadius>
+    <CornerRadius x:Key="Radius.Small">2</CornerRadius>
+    <CornerRadius x:Key="Radius.Medium">4</CornerRadius>
+    <CornerRadius x:Key="Radius.Large">8</CornerRadius>
+    <CornerRadius x:Key="Radius.Full">999</CornerRadius>
+
+    <!-- Border Thickness -->
+    <Thickness x:Key="Thickness.None">0</Thickness>
+    <Thickness x:Key="Thickness.Hairline">1</Thickness>
+    <Thickness x:Key="Thickness.Default">1.5</Thickness>
+    <Thickness x:Key="Thickness.Thick">2</Thickness>
+
+    <!-- Spacing — use as Width/Height, Margin, or Padding values -->
+    <sys:Double x:Key="Spacing.XSmall">4</sys:Double>
+    <sys:Double x:Key="Spacing.Small">8</sys:Double>
+    <sys:Double x:Key="Spacing.Medium">12</sys:Double>
+    <sys:Double x:Key="Spacing.Large">16</sys:Double>
+    <sys:Double x:Key="Spacing.XLarge">24</sys:Double>
+    <sys:Double x:Key="Spacing.XXLarge">32</sys:Double>
+
+</ResourceDictionary>

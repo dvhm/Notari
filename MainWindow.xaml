@@ -1,0 +1,291 @@
+﻿<Window x:Class="Notari.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Notari"
+        xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
+        mc:Ignorable="d"
+        Title="Notari" Height="700" Width="1000"
+        Background="{StaticResource Brush.Background}"
+        Foreground="{StaticResource Brush.TextPrimary}"
+        FontFamily="{StaticResource Font.Primary}"
+        FontSize="{StaticResource FontSize.Base}">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="local:Commands.New"    Executed="OnNew"/>
+        <CommandBinding Command="local:Commands.Open"   Executed="OnOpenFile"/>
+        <CommandBinding Command="local:Commands.Save"   Executed="OnSave"/>
+        <CommandBinding Command="local:Commands.SaveAs" Executed="OnSaveAs"/>
+        <CommandBinding Command="local:Commands.Exit"   Executed="OnExit"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Title — spans full width so centering is relative to the window, not the menu -->
+                <TextBlock x:Name="TitleLabel"
+                           Text="Untitled*"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"
+                           IsHitTestVisible="False"/>
+                <Menu Background="Transparent"
+                      HorizontalAlignment="Left"
+                      Foreground="{StaticResource Brush.TextPrimary}"
+                      Padding="4,2">
+                <MenuItem Header="File">
+                    <MenuItem Header="New"      Command="local:Commands.New">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="DocumentAdd"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Open..."  Command="local:Commands.Open">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="FolderOpen"/></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Save"     Command="local:Commands.Save">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="Save"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Save As..." Command="local:Commands.SaveAs">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="SaveArrowRight"/></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Exit"     Command="local:Commands.Exit">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="ArrowExit"/></MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Undo"       Command="Undo">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="ArrowUndo"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Redo"       Command="Redo">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="ArrowRedo"/></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Cut"        Command="Cut">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="Cut"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Copy"       Command="Copy">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="Copy"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Paste"      Command="Paste">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="ClipboardPaste"/></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Select All" Command="SelectAll">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="SelectAllOn"/></MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="View"/>
+                <MenuItem Header="Help"/>
+            </Menu>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,0,0,1"
+                Padding="8,4">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.ToggleBold"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Bold (Ctrl+B)">
+                    <ui:SymbolIcon Symbol="TextBold"/>
+                </Button>
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.ToggleItalic"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Italic (Ctrl+I)"
+                        Margin="2,0,0,0">
+                    <ui:SymbolIcon Symbol="TextItalic"/>
+                </Button>
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.ToggleUnderline"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Underline (Ctrl+U)"
+                        Margin="2,0,0,0">
+                    <ui:SymbolIcon Symbol="TextUnderline"/>
+                </Button>
+
+                <Separator Margin="6,4"/>
+
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.AlignLeft"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Align Left">
+                    <ui:SymbolIcon Symbol="TextAlignLeft"/>
+                </Button>
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.AlignCenter"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Align Center"
+                        Margin="2,0,0,0">
+                    <ui:SymbolIcon Symbol="TextAlignCenter"/>
+                </Button>
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="EditingCommands.AlignRight"
+                        CommandTarget="{Binding ElementName=Editor}"
+                        ToolTip="Align Right"
+                        Margin="2,0,0,0">
+                    <ui:SymbolIcon Symbol="TextAlignRight"/>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+
+        <ScrollViewer x:Name="EditorCanvas"
+                      Grid.Column="0"
+                      PreviewMouseWheel="OnEditorCanvasWheel"
+                      Background="{StaticResource Brush.Background}"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Width="816" MinHeight="1056"
+                    Margin="32"
+                    Background="{StaticResource Brush.Surface}">
+                <Border.LayoutTransform>
+                    <ScaleTransform x:Name="PaperScale"/>
+                </Border.LayoutTransform>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.45" BlurRadius="24" ShadowDepth="6" Direction="270"/>
+                </Border.Effect>
+                <RichTextBox x:Name="Editor"
+                             Background="Transparent"
+                             Foreground="{StaticResource Brush.TextPrimary}"
+                             CaretBrush="{StaticResource Brush.TextPrimary}"
+                             BorderThickness="0"
+                             Padding="80,72,80,72"
+                             FontFamily="{StaticResource Font.Primary}"
+                             FontSize="{StaticResource FontSize.Base}"
+                             AcceptsTab="True"
+                             SpellCheck.IsEnabled="True"
+                             VerticalScrollBarVisibility="Disabled"
+                             HorizontalScrollBarVisibility="Disabled"
+                             SelectionChanged="OnEditorSelectionChanged"
+                             TextChanged="OnEditorTextChanged"/>
+            </Border>
+        </ScrollViewer>
+
+            <Border Grid.Column="1"
+                    Background="{StaticResource Brush.Surface}"
+                    BorderBrush="{StaticResource Brush.Divider}"
+                    BorderThickness="1,0,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+
+                        <StackPanel Margin="12,12,12,10">
+                            <TextBlock Text="NOTES"
+                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                       FontSize="{StaticResource FontSize.XSmall}"
+                                       Margin="0,0,0,8"/>
+                            <TextBox AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Height="90"
+                                     VerticalScrollBarVisibility="Auto"
+                                     VerticalContentAlignment="Top"/>
+                        </StackPanel>
+                        <Border Height="1" Background="{StaticResource Brush.Divider}"/>
+
+                        <StackPanel Margin="12,12,12,10">
+                            <TextBlock Text="RHYMES"
+                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                       FontSize="{StaticResource FontSize.XSmall}"
+                                       Margin="0,0,0,6"/>
+                            <ItemsControl x:Name="RhymesList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"
+                                                   Foreground="{StaticResource Brush.TextPrimary}"
+                                                   Padding="0,3"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                        <Border Height="1" Background="{StaticResource Brush.Divider}"/>
+
+                        <StackPanel Margin="12,12,12,10">
+                            <TextBlock Text="SYNONYMS"
+                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                       FontSize="{StaticResource FontSize.XSmall}"
+                                       Margin="0,0,0,4"/>
+                            <ItemsControl x:Name="SynonymsList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Style="{StaticResource Style.SynExpander}">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Label}"
+                                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                                               FontSize="{StaticResource FontSize.XSmall}"/>
+                                                    <TextBlock Text="{Binding Words.Count, StringFormat=' ({0})'}"
+                                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                                               FontSize="{StaticResource FontSize.XSmall}"/>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsControl ItemsSource="{Binding Words}" Margin="8,0,0,6">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}"
+                                                                   Foreground="{StaticResource Brush.TextPrimary}"
+                                                                   Padding="0,2"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+        </Grid>
+
+        <Border Grid.Row="3"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,1,0,0"
+                Padding="12,4">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right"
+                           x:Name="ZoomLabel"
+                           Text="100%"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"/>
+                <Border DockPanel.Dock="Right"
+                        Width="1"
+                        Background="{StaticResource Brush.Divider}"
+                        Margin="10,2"/>
+                <TextBlock DockPanel.Dock="Right"
+                           Text="Page 1"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"/>
+                <TextBlock Text="Ready"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
+

@@ -1,0 +1,50 @@
+<Window x:Class="Notari.Dialogs.UnsavedChangesDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
+        Title="Unsaved changes"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{StaticResource Brush.Surface}"
+        Foreground="{StaticResource Brush.TextPrimary}"
+        FontFamily="{StaticResource Font.Primary}"
+        FontSize="{StaticResource FontSize.Base}">
+
+    <StackPanel Margin="24">
+
+        <!-- Icon + message -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+            <ui:SymbolIcon Symbol="TextBulletListSquareWarning"
+                           Foreground="{StaticResource Brush.Warning}"
+                           FontSize="28"
+                           VerticalAlignment="Center"
+                           Margin="0,2,14,0"/>
+            <StackPanel>
+                <TextBlock Text="You've made changes."
+                           FontSize="{StaticResource FontSize.Medium}"
+                           FontWeight="{StaticResource FontWeight.SemiBold}"
+                           Margin="0,0,0,6"/>
+                <TextBlock Text="Discard your changes and continue?"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button x:Name="BtnCancel"
+                    Content="Cancel"
+                    Width="90"
+                    Margin="0,0,8,0"
+                    Click="OnCancel"/>
+            <Button x:Name="BtnDiscard"
+                    Content="Discard"
+                    Width="90"
+                    Style="{StaticResource Style.Button.Accent}"
+                    Click="OnDiscard"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

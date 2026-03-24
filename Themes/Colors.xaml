@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Surfaces -->
+    <Color x:Key="Color.Background">#FF121212</Color>
+    <Color x:Key="Color.Surface">#FF1E1E1E</Color>
+    <Color x:Key="Color.SurfaceElevated">#FF2A2A2A</Color>
+
+    <!-- Text -->
+    <Color x:Key="Color.TextPrimary">#FFFFFFFF</Color>
+    <Color x:Key="Color.TextSecondary">#B3FFFFFF</Color>
+    <Color x:Key="Color.TextDisabled">#66FFFFFF</Color>
+
+    <!-- Brand -->
+    <Color x:Key="Color.Primary">#FF4FC3F7</Color>
+    <Color x:Key="Color.PrimaryHover">#FF81D4FA</Color>
+    <Color x:Key="Color.Accent">#FFFFC107</Color>
+
+    <!-- Semantic -->
+    <Color x:Key="Color.Success">#FF4CAF50</Color>
+    <Color x:Key="Color.Warning">#FFFFA000</Color>
+    <Color x:Key="Color.Error">#FFEF5350</Color>
+
+    <!-- Chrome -->
+    <Color x:Key="Color.Border">#33FFFFFF</Color>
+    <Color x:Key="Color.Divider">#1FFFFFFF</Color>
+
+</ResourceDictionary>
