@@ -12,18 +12,23 @@ namespace Notari
         private int    _lineCount = 0;
 
         private readonly PhoneticDatabase _db;
-        private CancellationTokenSource _lookupCts = new();
+        private CancellationTokenSource _lookupCts   = new();
+        private CancellationTokenSource _syllableCts = new();
+        private EditorAdorner _adorner = null!;
 
         public MainWindow()
         {
             _db = new PhoneticDatabase();
             InitializeComponent();
+            Loaded += (_, _) => InitAdorner();
         }
 
         protected override async void OnClosed(EventArgs e)
         {
             _lookupCts.Cancel();
             _lookupCts.Dispose();
+            _syllableCts.Cancel();
+            _syllableCts.Dispose();
             await _db.DisposeAsync();
             base.OnClosed(e);
         }

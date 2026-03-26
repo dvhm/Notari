@@ -12,6 +12,7 @@ namespace Notari
         {
             UpdateDocumentStats();
             SetDirty(true);
+            UpdateSyllableCounts();
         }
 
         private void UpdateDocumentStats()
@@ -19,6 +20,58 @@ namespace Notari
             var text = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd).Text;
             _wordCount = text.Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries).Length;
             _lineCount = Editor.Document.Blocks.Count;
+        }
+
+        private void InitAdorner()
+        {
+            var layer = AdornerLayer.GetAdornerLayer(Editor);
+            if (layer is null) return;
+            _adorner = new EditorAdorner(Editor);
+            layer.Add(_adorner);
+        }
+
+        private async void UpdateSyllableCounts()
+        {
+            _syllableCts.Cancel();
+            _syllableCts.Dispose();
+            _syllableCts = new CancellationTokenSource();
+            var ct = _syllableCts.Token;
+
+            try
+            {
+                await Task.Delay(500, ct);
+
+                // Collect paragraph positions and text on the UI thread.
+                var paragraphs = Editor.Document.Blocks
+                    .OfType<Paragraph>()
+                    .Select(p =>
+                    {
+                        var rect = p.ContentStart.GetCharacterRect(LogicalDirection.Forward);
+                        var text = new TextRange(p.ContentStart, p.ContentEnd).Text;
+                        return (Y: rect.Top, Text: text, Valid: !rect.IsEmpty);
+                    })
+                    .Where(p => p.Valid)
+                    .ToList();
+
+                // Compute syllable counts on a background thread.
+                var entries = await Task.Run(() =>
+                    paragraphs
+                        .Select(p =>
+                        {
+                            var words = p.Text
+                                .Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+                                .Select(w => new string(w.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray()))
+                                .Where(w => w.Length > 0);
+                            int syl = words.Sum(w => _db.GetSyllableCount(w) ?? 0);
+                            return (p.Y, Syl: syl);
+                        })
+                        .Where(e => e.Syl > 0)
+                        .ToList()
+                , ct);
+
+                _adorner?.SetGutterEntries(entries);
+            }
+            catch (OperationCanceledException) { }
         }
 
         private static readonly (string Code, PartOfSpeech Pos)[] _posCodes =
