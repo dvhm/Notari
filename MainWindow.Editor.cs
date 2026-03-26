@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -7,36 +8,128 @@ namespace Notari
 {
     public partial class MainWindow : Window
     {
-        private void OnEditorTextChanged(object sender, TextChangedEventArgs e) => SetDirty(true);
-
-        private void OnEditorSelectionChanged(object sender, RoutedEventArgs e)
+        private void OnEditorTextChanged(object sender, TextChangedEventArgs e)
         {
-            string word = GetActiveWord();
-            if (string.IsNullOrWhiteSpace(word))
-                return;
-
-            var copies = Enumerable.Repeat(word, 10).ToList();
-            RhymesList.ItemsSource = copies;
-
-            var groups = _synsetEngine.GetSynonyms(word)
-                .SelectMany(syn => _synsetEngine.GetWordPOS(syn)
-                    .Select(pos => new SynResult(word, syn, ParsePOS(pos))))
-                .GroupBy(r => r.Pos)
-                .OrderBy(g => (int)g.Key)
-                .Select(g => new SynGroup(g.Key, g.Select(r => r.Synonym).Distinct().ToList()))
-                .ToList();
-
-            SynonymsList.ItemsSource = groups;
+            UpdateDocumentStats();
+            SetDirty(true);
         }
 
-        private static PartOfSpeech ParsePOS(string pos) => pos switch
+        private void UpdateDocumentStats()
         {
-            "v" => PartOfSpeech.Verb,
-            "a" => PartOfSpeech.Adjective,
-            "s" => PartOfSpeech.AdjectiveSatellite,
-            "r" => PartOfSpeech.Adverb,
-            _   => PartOfSpeech.Noun,
-        };
+            var text = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd).Text;
+            _wordCount = text.Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries).Length;
+            _lineCount = Editor.Document.Blocks.Count;
+        }
+
+        private static readonly (string Code, PartOfSpeech Pos)[] _posCodes =
+        [
+            ("n", PartOfSpeech.Noun),
+            ("v", PartOfSpeech.Verb),
+            ("a", PartOfSpeech.Adjective),
+            ("s", PartOfSpeech.AdjectiveSatellite),
+            ("r", PartOfSpeech.Adverb),
+        ];
+
+        private async void OnEditorSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _lookupCts.Cancel();
+            _lookupCts.Dispose();
+            _lookupCts = new CancellationTokenSource();
+            var ct = _lookupCts.Token;
+
+            try
+            {
+                await Task.Delay(250, ct);
+
+                string word = GetActiveWord();
+
+                FocusLabel.Text       = string.IsNullOrEmpty(word) ? "" : $"Focus: \"{word}\"";
+                FocusLabel.Visibility = string.IsNullOrEmpty(word) ? Visibility.Collapsed : Visibility.Visible;
+
+                if (string.IsNullOrWhiteSpace(word))
+                {
+                    ClearSidebar();
+                    return;
+                }
+
+                var result = await Task.Run(() =>
+                {
+                    var phonetics    = _db.GetPhonetics(word);
+                    var rhymes       = _db.GetRhymes(word).Select(r => r.Text).ToList();
+                    var multi        = _db.GetMultisyllabicRhymes(word).Select(r => r.Text).ToList();
+                    var assonance    = _db.GetAssonance(word).Select(r => r.Text).ToList();
+                    var alliteration = _db.GetAlliteration(word).Select(r => r.Text).ToList();
+                    var synGroups    = _posCodes
+                        .Select(p => new SynGroup(p.Pos, _db.GetSynonyms(word, pos: p.Code).Select(r => r.Text).ToList()))
+                        .Where(g => g.Words.Count > 0)
+                        .ToList();
+                    var antonyms  = _db.GetAntonyms(word).Select(r => r.Text).ToList();
+                    var hypernyms = _db.GetHypernyms(word).Select(r => r.Text).ToList();
+                    var hyponyms  = _db.GetHyponyms(word).Select(r => r.Text).ToList();
+                    return (phonetics, rhymes, multi, assonance, alliteration, synGroups, antonyms, hypernyms, hyponyms);
+                }, ct);
+
+                // Word info strip
+                var primary = result.phonetics.FirstOrDefault();
+                if (primary is not null)
+                {
+                    WordLabel.Text     = word;
+                    SyllableLabel.Text = $"{primary.SyllableCount} syl";
+                    StressLabel.Text   = string.Join("-", primary.StressPattern.AsEnumerable());
+                    ArpaLabel.Text     = primary.Arpa;
+                    WordInfoStrip.Visibility   = Visibility.Visible;
+                    WordInfoDivider.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    WordInfoStrip.Visibility   = Visibility.Collapsed;
+                    WordInfoDivider.Visibility = Visibility.Collapsed;
+                }
+
+                // Phonetic groups
+                SetWordGroup(RhymesExpander,        RhymesList,       RhymesCount,        result.rhymes);
+                SetWordGroup(MultisyllabicExpander,  MultisyllabicList, MultisyllabicCount, result.multi);
+                SetWordGroup(AssonanceExpander,     AssonanceList,    AssonanceCount,     result.assonance);
+                SetWordGroup(AlliterationExpander,  AlliterationList, AlliterationCount,  result.alliteration);
+
+                // Semantic groups
+                var synTotal = result.synGroups.Sum(g => g.Words.Count);
+                SynonymsList.ItemsSource    = result.synGroups;
+                SynonymsCount.Text          = synTotal > 0 ? $" ({synTotal})" : "";
+                SynonymsExpander.Visibility = result.synGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                SetWordGroup(AntonymsExpander,  AntonymsList,  AntonymsCount,  result.antonyms);
+                SetWordGroup(HypernymsExpander, HypernymsList, HypernymsCount, result.hypernyms);
+                SetWordGroup(HyponymsExpander,  HyponymsList,  HyponymsCount,  result.hyponyms);
+            }
+            catch (OperationCanceledException) { }
+        }
+
+        private static void SetWordGroup(
+            Expander expander, ItemsControl list, TextBlock count, IReadOnlyList<string> words)
+        {
+            list.ItemsSource    = words;
+            count.Text          = words.Count > 0 ? $" ({words.Count})" : "";
+            expander.Visibility = words.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ClearSidebar()
+        {
+            FocusLabel.Visibility = Visibility.Collapsed;
+
+            WordInfoStrip.Visibility   = Visibility.Collapsed;
+            WordInfoDivider.Visibility = Visibility.Collapsed;
+
+            RhymesExpander.Visibility        = Visibility.Collapsed;
+            MultisyllabicExpander.Visibility = Visibility.Collapsed;
+            AssonanceExpander.Visibility     = Visibility.Collapsed;
+            AlliterationExpander.Visibility  = Visibility.Collapsed;
+
+            SynonymsExpander.Visibility  = Visibility.Collapsed;
+            AntonymsExpander.Visibility  = Visibility.Collapsed;
+            HypernymsExpander.Visibility = Visibility.Collapsed;
+            HyponymsExpander.Visibility  = Visibility.Collapsed;
+        }
 
         private string GetActiveWord()
         {

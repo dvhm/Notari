@@ -35,11 +35,20 @@
             <Grid>
                 <!-- Title — spans full width so centering is relative to the window, not the menu -->
                 <TextBlock x:Name="TitleLabel"
-                           Text="Untitled*"
+                           Text="Untitled"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Foreground="{StaticResource Brush.TextSecondary}"
                            FontSize="{StaticResource FontSize.Small}"
+                           IsHitTestVisible="False"/>
+                <!-- Focus word — right-aligned, shown when caret is on a word -->
+                <TextBlock x:Name="FocusLabel"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.XSmall}"
+                           Margin="0,0,12,0"
+                           Visibility="Collapsed"
                            IsHitTestVisible="False"/>
                 <Menu Background="Transparent"
                       HorizontalAlignment="Left"
@@ -192,6 +201,7 @@
                               HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
 
+                        <!-- NOTES -->
                         <StackPanel Margin="12,12,12,10">
                             <TextBlock Text="NOTES"
                                        Foreground="{StaticResource Brush.TextSecondary}"
@@ -205,56 +215,280 @@
                         </StackPanel>
                         <Border Height="1" Background="{StaticResource Brush.Divider}"/>
 
-                        <StackPanel Margin="12,12,12,10">
-                            <TextBlock Text="RHYMES"
-                                       Foreground="{StaticResource Brush.TextSecondary}"
-                                       FontSize="{StaticResource FontSize.XSmall}"
-                                       Margin="0,0,0,6"/>
-                            <ItemsControl x:Name="RhymesList">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   Foreground="{StaticResource Brush.TextPrimary}"
-                                                   Padding="0,3"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                        <!-- WORD INFO STRIP -->
+                        <Border x:Name="WordInfoStrip"
+                                Visibility="Collapsed"
+                                Padding="12,10,12,10">
+                            <StackPanel>
+                                <TextBlock x:Name="WordLabel"
+                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                           FontSize="{StaticResource FontSize.Medium}"
+                                           FontWeight="{StaticResource FontWeight.SemiBold}"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,2,0,3">
+                                    <TextBlock x:Name="SyllableLabel"
+                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                               FontSize="{StaticResource FontSize.XSmall}"/>
+                                    <TextBlock Text=" · "
+                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                               FontSize="{StaticResource FontSize.XSmall}"/>
+                                    <TextBlock x:Name="StressLabel"
+                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                               FontSize="{StaticResource FontSize.XSmall}"/>
+                                </StackPanel>
+                                <TextBlock x:Name="ArpaLabel"
+                                           Foreground="{StaticResource Brush.TextSecondary}"
+                                           FontFamily="{StaticResource Font.Mono}"
+                                           FontSize="{StaticResource FontSize.XSmall}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                        <Border x:Name="WordInfoDivider"
+                                Height="1"
+                                Background="{StaticResource Brush.Divider}"
+                                Visibility="Collapsed"/>
+
+                        <!-- PHONETIC SECTION -->
+                        <Expander Style="{StaticResource Style.SectionExpander}">
+                            <Expander.Header>
+                                <TextBlock Text="PHONETIC"
+                                           Foreground="{StaticResource Brush.TextSecondary}"
+                                           FontSize="{StaticResource FontSize.XSmall}"/>
+                            </Expander.Header>
+                            <StackPanel Margin="0,0,0,8">
+
+                                <Expander x:Name="RhymesExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="RHYMES"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="RhymesCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="RhymesList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="MultisyllabicExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="MULTISYLLABIC"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="MultisyllabicCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="MultisyllabicList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="AssonanceExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="ASSONANCE"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="AssonanceCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="AssonanceList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="AlliterationExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="ALLITERATION"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="AlliterationCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="AlliterationList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                            </StackPanel>
+                        </Expander>
                         <Border Height="1" Background="{StaticResource Brush.Divider}"/>
 
-                        <StackPanel Margin="12,12,12,10">
-                            <TextBlock Text="SYNONYMS"
-                                       Foreground="{StaticResource Brush.TextSecondary}"
-                                       FontSize="{StaticResource FontSize.XSmall}"
-                                       Margin="0,0,0,4"/>
-                            <ItemsControl x:Name="SynonymsList">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Expander Style="{StaticResource Style.SynExpander}">
-                                            <Expander.Header>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Label}"
-                                                               Foreground="{StaticResource Brush.TextSecondary}"
-                                                               FontSize="{StaticResource FontSize.XSmall}"/>
-                                                    <TextBlock Text="{Binding Words.Count, StringFormat=' ({0})'}"
-                                                               Foreground="{StaticResource Brush.TextSecondary}"
-                                                               FontSize="{StaticResource FontSize.XSmall}"/>
-                                                </StackPanel>
-                                            </Expander.Header>
-                                            <ItemsControl ItemsSource="{Binding Words}" Margin="8,0,0,6">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding}"
-                                                                   Foreground="{StaticResource Brush.TextPrimary}"
-                                                                   Padding="0,2"/>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </Expander>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                        <!-- SEMANTIC SECTION -->
+                        <Expander Style="{StaticResource Style.SectionExpander}">
+                            <Expander.Header>
+                                <TextBlock Text="SEMANTIC"
+                                           Foreground="{StaticResource Brush.TextSecondary}"
+                                           FontSize="{StaticResource FontSize.XSmall}"/>
+                            </Expander.Header>
+                            <StackPanel Margin="0,0,0,8">
+
+                                <Expander x:Name="SynonymsExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="SYNONYMS"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="SynonymsCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="SynonymsList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Expander Style="{StaticResource Style.SynExpander}">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Label}"
+                                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                                            <TextBlock Text="{Binding Words.Count, StringFormat=' ({0})'}"
+                                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsControl ItemsSource="{Binding Words}" Margin="8,0,0,6">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding}"
+                                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                                           Padding="0,2"/>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Expander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="AntonymsExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="ANTONYMS"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="AntonymsCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="AntonymsList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="HypernymsExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="HYPERNYMS"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="HypernymsCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="HypernymsList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                                <Expander x:Name="HyponymsExpander"
+                                          Style="{StaticResource Style.SynExpander}"
+                                          Margin="12,0,12,0"
+                                          Visibility="Collapsed">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="HYPONYMS"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                            <TextBlock x:Name="HyponymsCount"
+                                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                                       FontSize="{StaticResource FontSize.XSmall}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsControl x:Name="HyponymsList" Margin="8,0,0,6">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           Padding="0,2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+
+                            </StackPanel>
+                        </Expander>
 
                     </StackPanel>
                 </ScrollViewer>

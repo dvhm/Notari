@@ -11,8 +11,14 @@ namespace Notari
         private void SetDirty(bool dirty)
         {
             _isDirty = dirty;
+            UpdateTitle();
+        }
+
+        private void UpdateTitle()
+        {
             string name = string.IsNullOrEmpty(_filePath) ? "Untitled" : IOPath.GetFileName(_filePath);
-            TitleLabel.Text = dirty ? $"{name}*" : name;
+            if (_isDirty) name += "*";
+            TitleLabel.Text = $"{name}   \u2022   {_wordCount} words   \u2022   {_lineCount} lines";
         }
 
         private bool ConfirmDiscard()

@@ -14,19 +14,14 @@
 
   <ItemGroup>
     <PackageReference Include="FluentIcons.Wpf" Version="2.0.321" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.119.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="PhonKit">
-      <HintPath>..\..\PhonKit\PhonKit\bin\Debug\PhonKit.dll</HintPath>
+      <HintPath>..\..\..\Other\phoneticdb\PhonKit\bin\Release\net8.0\PhonKit.dll</HintPath>
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="phonetics.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>
