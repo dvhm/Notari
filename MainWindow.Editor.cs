@@ -60,7 +60,7 @@ namespace Notari
                     segments
                         .Select(s =>
                         {
-                            var words = s.Text
+                            var words = _bracketedContent.Replace(s.Text, " ")
                                 .Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)
                                 .Select(w => new string(w.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray()))
                                 .Where(w => w.Length > 0);
@@ -75,6 +75,8 @@ namespace Notari
             }
             catch (OperationCanceledException) { }
         }
+
+        private static readonly Regex _bracketedContent = new(@"\[[^\]]*\]|\([^\)]*\)", RegexOptions.Compiled);
 
         // Recursively flattens Span nesting so LineBreak and Run elements are always at the top level.
         private static IEnumerable<Inline> FlattenInlines(InlineCollection inlines)
