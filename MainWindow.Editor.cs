@@ -14,6 +14,7 @@ namespace Notari
         {
             UpdateDocumentStats();
             SetDirty(true);
+            _adorner?.SetHighlights([]);
             UpdateSyllableCounts();
         }
 
@@ -199,7 +200,8 @@ namespace Notari
                     return;
                 }
 
-                _adorner?.SetHighlights(FindWordRects(word), stroke: Brushes.Red);
+                _adorner?.SetHighlights(
+                    HighlightToggle.IsChecked == true ? FindWordRects(word) : []);
 
                 var result = await Task.Run(() =>
                 {
@@ -260,6 +262,19 @@ namespace Notari
             list.ItemsSource    = words;
             count.Text          = words.Count > 0 ? $" ({words.Count})" : "";
             expander.Visibility = words.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OnHighlightToggled(object sender, RoutedEventArgs e)
+        {
+            if (HighlightToggle.IsChecked != true)
+            {
+                _adorner?.SetHighlights([]);
+                return;
+            }
+
+            string word = GetActiveWord();
+            if (!string.IsNullOrEmpty(word))
+                _adorner?.SetHighlights(FindWordRects(word));
         }
 
         private void ClearSidebar()

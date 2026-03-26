@@ -19,20 +19,20 @@ namespace Notari
         private readonly Typeface _typeface;
         private readonly double   _fontSize;
         private readonly Brush    _brush;
+        private readonly Brush    _highlightBrush;
 
         private IReadOnlyList<(double Y, int Syllables)> _gutterEntries = [];
         private IReadOnlyList<Rect>                      _highlights    = [];
-        private Pen?                                     _highlightStroke;
-        private Brush?                                   _highlightFill;
 
         public EditorAdorner(RichTextBox editor) : base(editor)
         {
             IsHitTestVisible = false;
 
             var res = Application.Current.Resources;
-            _typeface = new Typeface((FontFamily)res["Font.Primary"], FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-            _fontSize  = (double)res["FontSize.XSmall"];
-            _brush     = (Brush)res["Brush.TextSecondary"];
+            _typeface       = new Typeface((FontFamily)res["Font.Primary"], FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            _fontSize       = (double)res["FontSize.XSmall"];
+            _brush          = (Brush)res["Brush.TextSecondary"];
+            _highlightBrush = (Brush)res["Brush.Highlight"];
         }
 
         /// <summary>Sets the per-paragraph syllable counts and schedules a redraw.</summary>
@@ -42,23 +42,11 @@ namespace Notari
             InvalidateVisual();
         }
 
-        /// <summary>
-        /// Sets word highlight rectangles. Pass null for either brush to skip fill or stroke.
-        /// Calling with an empty list clears all highlights.
-        /// </summary>
-        public void SetHighlights(IReadOnlyList<Rect> rects, Brush? fill = null, Brush? stroke = null)
+        /// <summary>Sets word highlight rectangles. Pass an empty list to clear.</summary>
+        public void SetHighlights(IReadOnlyList<Rect> rects)
         {
-            _highlights     = rects;
-            _highlightFill  = fill;
-            _highlightStroke = stroke is null ? null : MakeFrozenPen(stroke, 1.5);
+            _highlights = rects;
             InvalidateVisual();
-        }
-
-        private static Pen MakeFrozenPen(Brush brush, double thickness)
-        {
-            var pen = new Pen(brush, thickness);
-            pen.Freeze();
-            return pen;
         }
 
         protected override void OnRender(DrawingContext dc)
@@ -66,7 +54,7 @@ namespace Notari
             double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
             foreach (var rect in _highlights)
-                dc.DrawRectangle(_highlightFill, _highlightStroke, rect);
+                dc.DrawRoundedRectangle(_highlightBrush, null, rect, 2, 2);
 
             foreach (var (y, syl) in _gutterEntries)
             {

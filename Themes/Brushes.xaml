@@ -23,6 +23,7 @@
     <SolidColorBrush x:Key="Brush.Success"         Color="{StaticResource Color.Success}"/>
     <SolidColorBrush x:Key="Brush.Warning"         Color="{StaticResource Color.Warning}"/>
     <SolidColorBrush x:Key="Brush.Error"           Color="{StaticResource Color.Error}"/>
+    <SolidColorBrush x:Key="Brush.Highlight"       Color="{StaticResource Color.Highlight}"/>
 
     <!-- Chrome -->
     <SolidColorBrush x:Key="Brush.Border"          Color="{StaticResource Color.Border}"/>

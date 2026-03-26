@@ -150,6 +150,16 @@
                         Margin="2,0,0,0">
                     <ui:SymbolIcon Symbol="TextAlignRight"/>
                 </Button>
+
+                <Separator Margin="6,4"/>
+
+                <ToggleButton x:Name="HighlightToggle"
+                              Style="{StaticResource Style.ToolbarToggleButton}"
+                              ToolTip="Highlight matching words"
+                              Checked="OnHighlightToggled"
+                              Unchecked="OnHighlightToggled">
+                    <ui:SymbolIcon Symbol="Highlight"/>
+                </ToggleButton>
             </StackPanel>
         </Border>
 
