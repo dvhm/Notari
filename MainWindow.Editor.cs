@@ -15,6 +15,7 @@ namespace Notari
             UpdateDocumentStats();
             SetDirty(true);
             _adorner?.SetHighlights([]);
+            _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();
         }
 
@@ -74,11 +75,39 @@ namespace Notari
                 , ct);
 
                 _adorner?.SetGutterEntries(entries);
+                _adorner?.SetDimRanges(FindBracketRects());
             }
             catch (OperationCanceledException) { }
         }
 
         private static readonly Regex _bracketedContent = new(@"\[[^\]]*\]|\([^\)]*\)", RegexOptions.Compiled);
+        private static readonly Regex _allBrackets      = new(@"\[[^\]]*\]|\([^\)]*\)|\{[^\}]*\}", RegexOptions.Compiled);
+
+        private List<Rect> FindBracketRects()
+        {
+            var rects = new List<Rect>();
+
+            foreach (var run in GetAllRuns())
+            {
+                string text = run.Text;
+                foreach (System.Text.RegularExpressions.Match m in _allBrackets.Matches(text))
+                {
+                    var startPtr = run.ContentStart.GetPositionAtOffset(m.Index);
+                    var endPtr   = run.ContentStart.GetPositionAtOffset(m.Index + m.Length);
+
+                    if (startPtr is not null && endPtr is not null)
+                    {
+                        var r0 = startPtr.GetCharacterRect(LogicalDirection.Forward);
+                        var r1 = endPtr.GetCharacterRect(LogicalDirection.Backward);
+
+                        if (!r0.IsEmpty && !r1.IsEmpty)
+                            rects.Add(new Rect(r0.Left, r0.Top, r1.Right - r0.Left, r0.Height));
+                    }
+                }
+            }
+
+            return rects;
+        }
 
         private IEnumerable<Run> GetAllRuns() =>
             Editor.Document.Blocks

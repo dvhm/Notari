@@ -20,9 +20,11 @@ namespace Notari
         private readonly double   _fontSize;
         private readonly Brush    _brush;
         private readonly Brush    _highlightBrush;
+        private readonly Brush    _dimBrush;
 
         private IReadOnlyList<(double Y, int Syllables)> _gutterEntries = [];
         private IReadOnlyList<Rect>                      _highlights    = [];
+        private IReadOnlyList<Rect>                      _dimRects      = [];
 
         public EditorAdorner(RichTextBox editor) : base(editor)
         {
@@ -33,6 +35,7 @@ namespace Notari
             _fontSize       = (double)res["FontSize.XSmall"];
             _brush          = (Brush)res["Brush.TextSecondary"];
             _highlightBrush = (Brush)res["Brush.Highlight"];
+            _dimBrush       = (Brush)res["Brush.Dim"];
         }
 
         /// <summary>Sets the per-paragraph syllable counts and schedules a redraw.</summary>
@@ -49,9 +52,19 @@ namespace Notari
             InvalidateVisual();
         }
 
+        /// <summary>Sets dim overlay rectangles for bracketed content. Pass an empty list to clear.</summary>
+        public void SetDimRanges(IReadOnlyList<Rect> rects)
+        {
+            _dimRects = rects;
+            InvalidateVisual();
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+            foreach (var rect in _dimRects)
+                dc.DrawRectangle(_dimBrush, null, rect);
 
             foreach (var rect in _highlights)
                 dc.DrawRoundedRectangle(_highlightBrush, null, rect, 2, 2);

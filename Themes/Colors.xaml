@@ -21,6 +21,7 @@
     <Color x:Key="Color.Warning">#FFFFA000</Color>
     <Color x:Key="Color.Error">#FFEF5350</Color>
     <Color x:Key="Color.Highlight">#66C084FC</Color>
+    <Color x:Key="Color.Dim">#881E1E1E</Color>
 
     <!-- Chrome -->
     <Color x:Key="Color.Border">#33FFFFFF</Color>
