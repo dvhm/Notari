@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,8 @@ namespace Notari
         {
             var text = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd).Text;
             _wordCount = text.Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries).Length;
-            _lineCount = Editor.Document.Blocks.Count;
+            _lineCount = Editor.Document.Blocks.OfType<Paragraph>()
+                .Sum(p => 1 + FlattenInlines(p.Inlines).OfType<LineBreak>().Count());
         }
 
         private void InitAdorner()
@@ -41,29 +43,29 @@ namespace Notari
             {
                 await Task.Delay(500, ct);
 
-                // Collect paragraph positions and text on the UI thread.
-                var paragraphs = Editor.Document.Blocks
+                // Collect line segments on the UI thread, splitting at LineBreak elements.
+                var segments = Editor.Document.Blocks
                     .OfType<Paragraph>()
-                    .Select(p =>
+                    .SelectMany(GetLineSegments)
+                    .Select(s =>
                     {
-                        var rect = p.ContentStart.GetCharacterRect(LogicalDirection.Forward);
-                        var text = new TextRange(p.ContentStart, p.ContentEnd).Text;
-                        return (Y: rect.Top, Text: text, Valid: !rect.IsEmpty);
+                        var rect = s.Start.GetCharacterRect(LogicalDirection.Forward);
+                        return (Y: rect.Top, s.Text, Valid: !rect.IsEmpty);
                     })
-                    .Where(p => p.Valid)
+                    .Where(s => s.Valid)
                     .ToList();
 
                 // Compute syllable counts on a background thread.
                 var entries = await Task.Run(() =>
-                    paragraphs
-                        .Select(p =>
+                    segments
+                        .Select(s =>
                         {
-                            var words = p.Text
-                                .Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+                            var words = s.Text
+                                .Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)
                                 .Select(w => new string(w.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray()))
                                 .Where(w => w.Length > 0);
                             int syl = words.Sum(w => _db.GetSyllableCount(w) ?? 0);
-                            return (p.Y, Syl: syl);
+                            return (s.Y, Syl: syl);
                         })
                         .Where(e => e.Syl > 0)
                         .ToList()
@@ -72,6 +74,48 @@ namespace Notari
                 _adorner?.SetGutterEntries(entries);
             }
             catch (OperationCanceledException) { }
+        }
+
+        // Recursively flattens Span nesting so LineBreak and Run elements are always at the top level.
+        private static IEnumerable<Inline> FlattenInlines(InlineCollection inlines)
+        {
+            foreach (var inline in inlines)
+            {
+                if (inline is Span span)
+                    foreach (var child in FlattenInlines(span.Inlines))
+                        yield return child;
+                else
+                    yield return inline;
+            }
+        }
+
+        // Splits a paragraph at its LineBreak elements, yielding one (start pointer, text) per visual line.
+        private static IEnumerable<(TextPointer Start, string Text)> GetLineSegments(Paragraph para)
+        {
+            var segStart = para.ContentStart;
+            var sb = new System.Text.StringBuilder();
+            bool nextRunSetsStart = false;
+
+            foreach (var inline in FlattenInlines(para.Inlines))
+            {
+                if (inline is LineBreak)
+                {
+                    yield return (segStart, sb.ToString());
+                    sb.Clear();
+                    nextRunSetsStart = true;
+                }
+                else if (inline is Run run)
+                {
+                    if (nextRunSetsStart)
+                    {
+                        segStart = run.ContentStart;
+                        nextRunSetsStart = false;
+                    }
+                    sb.Append(run.Text);
+                }
+            }
+
+            yield return (segStart, sb.ToString());
         }
 
         private static readonly (string Code, PartOfSpeech Pos)[] _posCodes =
