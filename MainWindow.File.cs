@@ -93,6 +93,13 @@ namespace Notari
 
         private void OnExit(object sender, ExecutedRoutedEventArgs e) => Application.Current.Shutdown();
 
+        private void OnSettings(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new Notari.Dialogs.SettingsDialog(this, _settings);
+            if (dlg.ShowDialog() == true)
+                ApplySettings(dlg.Result);
+        }
+
         private void LoadFile(string path)
         {
             string ext   = IOPath.GetExtension(path).ToLowerInvariant();

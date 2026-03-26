@@ -13,11 +13,12 @@
         FontSize="{StaticResource FontSize.Base}">
 
     <Window.CommandBindings>
-        <CommandBinding Command="local:Commands.New"    Executed="OnNew"/>
-        <CommandBinding Command="local:Commands.Open"   Executed="OnOpenFile"/>
-        <CommandBinding Command="local:Commands.Save"   Executed="OnSave"/>
-        <CommandBinding Command="local:Commands.SaveAs" Executed="OnSaveAs"/>
-        <CommandBinding Command="local:Commands.Exit"   Executed="OnExit"/>
+        <CommandBinding Command="local:Commands.New"      Executed="OnNew"/>
+        <CommandBinding Command="local:Commands.Open"     Executed="OnOpenFile"/>
+        <CommandBinding Command="local:Commands.Save"     Executed="OnSave"/>
+        <CommandBinding Command="local:Commands.SaveAs"   Executed="OnSaveAs"/>
+        <CommandBinding Command="local:Commands.Exit"     Executed="OnExit"/>
+        <CommandBinding Command="local:Commands.Settings" Executed="OnSettings"/>
     </Window.CommandBindings>
 
     <Grid>
@@ -94,6 +95,10 @@
                     <MenuItem Header="Select All" Command="SelectAll">
                         <MenuItem.Icon><ui:SymbolIcon Symbol="SelectAllOn"/></MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Settings" Command="local:Commands.Settings">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="Settings"/></MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="View"/>
                 <MenuItem Header="Help"/>
@@ -160,6 +165,14 @@
                               Unchecked="OnHighlightToggled">
                     <ui:SymbolIcon Symbol="Highlight"/>
                 </ToggleButton>
+
+                <Separator Margin="6,4"/>
+                <Button Style="{StaticResource Style.ToolbarButton}"
+                        Command="local:Commands.Settings"
+                        ToolTip="Settings (Ctrl+,)"
+                        Margin="2,0,0,0">
+                    <ui:SymbolIcon Symbol="Settings"/>
+                </Button>
             </StackPanel>
         </Border>
 

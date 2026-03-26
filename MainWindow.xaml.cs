@@ -11,6 +11,7 @@ namespace Notari
         private int    _wordCount = 0;
         private int    _lineCount = 0;
 
+        private AppSettings _settings = new();
         private readonly PhoneticDatabase _db;
         private CancellationTokenSource _lookupCts   = new();
         private CancellationTokenSource _syllableCts = new();
@@ -18,9 +19,10 @@ namespace Notari
 
         public MainWindow()
         {
+            _settings = AppSettings.Load();
             _db = new PhoneticDatabase();
             InitializeComponent();
-            Loaded += (_, _) => InitAdorner();
+            Loaded += (_, _) => { InitAdorner(); ApplySettings(_settings, save: false); };
         }
 
         protected override async void OnClosed(EventArgs e)

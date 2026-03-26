@@ -19,7 +19,7 @@ namespace Notari
         private readonly Typeface _typeface;
         private readonly double   _fontSize;
         private readonly Brush    _brush;
-        private readonly Brush    _highlightBrush;
+        private Brush _highlightBrush;
         private readonly Brush    _dimBrush;
 
         private IReadOnlyList<(double Y, int Syllables)> _gutterEntries = [];
@@ -49,6 +49,12 @@ namespace Notari
         public void SetHighlights(IReadOnlyList<Rect> rects)
         {
             _highlights = rects;
+            InvalidateVisual();
+        }
+
+        public void SetHighlightBrush(Brush brush)
+        {
+            _highlightBrush = brush;
             InvalidateVisual();
         }
 

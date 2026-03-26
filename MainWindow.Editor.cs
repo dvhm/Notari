@@ -75,13 +75,45 @@ namespace Notari
                 , ct);
 
                 _adorner?.SetGutterEntries(entries);
-                _adorner?.SetDimRanges(FindBracketRects());
+                if (_settings.DimBrackets)
+                    _adorner?.SetDimRanges(FindBracketRects());
+                else
+                    _adorner?.SetDimRanges([]);
             }
             catch (OperationCanceledException) { }
         }
 
         private static readonly Regex _bracketedContent = new(@"\[[^\]]*\]|\([^\)]*\)", RegexOptions.Compiled);
-        private static readonly Regex _allBrackets      = new(@"\[[^\]]*\]|\([^\)]*\)|\{[^\}]*\}", RegexOptions.Compiled);
+        private Regex _allBrackets = new(@"\[[^\]]*\]|\([^\)]*\)|\{[^\}]*\}", RegexOptions.Compiled);
+
+        private static Regex BuildBracketRegex(AppSettings s)
+        {
+            var parts = new List<string>();
+            if (s.DimSquare) parts.Add(@"\[[^\]]*\]");
+            if (s.DimRound)  parts.Add(@"\([^\)]*\)");
+            if (s.DimCurly)  parts.Add(@"\{[^\}]*\}");
+            return parts.Count > 0
+                ? new Regex(string.Join("|", parts), RegexOptions.Compiled)
+                : new Regex(@"(?!x)x", RegexOptions.Compiled); // never matches
+        }
+
+        internal void ApplySettings(AppSettings s, bool save = true)
+        {
+            _settings = s;
+            if (save) s.Save();
+
+            _allBrackets = BuildBracketRegex(s);
+
+            if (System.Windows.Media.ColorConverter.ConvertFromString(s.HighlightColor) is System.Windows.Media.Color c)
+                _adorner?.SetHighlightBrush(new System.Windows.Media.SolidColorBrush(c));
+
+            _adorner?.SetDimRanges([]);
+            UpdateSyllableCounts();
+
+            string word = GetActiveWord();
+            if (!string.IsNullOrEmpty(word) && HighlightToggle.IsChecked == true)
+                _adorner?.SetHighlights(FindWordRects(word));
+        }
 
         private List<Rect> FindBracketRects()
         {

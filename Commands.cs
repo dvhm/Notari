@@ -23,4 +23,8 @@ public static class Commands
     public static readonly RoutedUICommand Exit = new(
         "Exit", nameof(Exit), typeof(Commands),
         [new KeyGesture(Key.F4, ModifierKeys.Alt)]);
+
+    public static readonly RoutedUICommand Settings = new(
+        "Settings", nameof(Settings), typeof(Commands),
+        [new KeyGesture(Key.OemComma, ModifierKeys.Control)]);
 }
