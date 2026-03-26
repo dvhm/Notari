@@ -7,6 +7,7 @@
         xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
         mc:Ignorable="d"
         Title="Notari" Height="700" Width="1000"
+        WindowStyle="None"
         Background="{StaticResource Brush.Background}"
         Foreground="{StaticResource Brush.TextPrimary}"
         FontFamily="{StaticResource Font.Primary}"
@@ -21,6 +22,13 @@
         <CommandBinding Command="local:Commands.Settings" Executed="OnSettings"/>
     </Window.CommandBindings>
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="6"
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,6 +38,7 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
+                Height="32"
                 Background="{StaticResource Brush.Surface}"
                 BorderBrush="{StaticResource Brush.Divider}"
                 BorderThickness="0,0,0,1">
@@ -48,13 +57,14 @@
                            VerticalAlignment="Center"
                            Foreground="{StaticResource Brush.TextSecondary}"
                            FontSize="{StaticResource FontSize.XSmall}"
-                           Margin="0,0,12,0"
+                           Margin="0,0,150,0"
                            Visibility="Collapsed"
                            IsHitTestVisible="False"/>
                 <Menu Background="Transparent"
                       HorizontalAlignment="Left"
                       Foreground="{StaticResource Brush.TextPrimary}"
-                      Padding="4,2">
+                      Padding="4,2"
+                      WindowChrome.IsHitTestVisibleInChrome="True">
                 <MenuItem Header="File">
                     <MenuItem Header="New"      Command="local:Commands.New">
                         <MenuItem.Icon><ui:SymbolIcon Symbol="DocumentAdd"/></MenuItem.Icon>
@@ -103,6 +113,29 @@
                 <MenuItem Header="View"/>
                 <MenuItem Header="Help"/>
             </Menu>
+
+                <!-- Window caption buttons -->
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                            Orientation="Horizontal">
+                    <Button Style="{StaticResource Style.CaptionButton}"
+                            Click="OnCaptionMinimize"
+                            ToolTip="Minimize">
+                        <ui:SymbolIcon Symbol="Subtract" FontSize="11"/>
+                    </Button>
+                    <Button Style="{StaticResource Style.CaptionButton}"
+                            Click="OnCaptionMaximize"
+                            ToolTip="Maximize">
+                        <Grid>
+                            <ui:SymbolIcon x:Name="IconMaximize" Symbol="Maximize"     FontSize="11"/>
+                            <ui:SymbolIcon x:Name="IconRestore"  Symbol="ArrowMinimize" FontSize="11" Visibility="Collapsed"/>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource Style.CaptionButton.Close}"
+                            Command="local:Commands.Exit"
+                            ToolTip="Close">
+                        <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
