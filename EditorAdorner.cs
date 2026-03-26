@@ -21,6 +21,9 @@ namespace Notari
         private readonly Brush    _brush;
 
         private IReadOnlyList<(double Y, int Syllables)> _gutterEntries = [];
+        private IReadOnlyList<Rect>                      _highlights    = [];
+        private Pen?                                     _highlightStroke;
+        private Brush?                                   _highlightFill;
 
         public EditorAdorner(RichTextBox editor) : base(editor)
         {
@@ -39,9 +42,31 @@ namespace Notari
             InvalidateVisual();
         }
 
+        /// <summary>
+        /// Sets word highlight rectangles. Pass null for either brush to skip fill or stroke.
+        /// Calling with an empty list clears all highlights.
+        /// </summary>
+        public void SetHighlights(IReadOnlyList<Rect> rects, Brush? fill = null, Brush? stroke = null)
+        {
+            _highlights     = rects;
+            _highlightFill  = fill;
+            _highlightStroke = stroke is null ? null : MakeFrozenPen(stroke, 1.5);
+            InvalidateVisual();
+        }
+
+        private static Pen MakeFrozenPen(Brush brush, double thickness)
+        {
+            var pen = new Pen(brush, thickness);
+            pen.Freeze();
+            return pen;
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+            foreach (var rect in _highlights)
+                dc.DrawRectangle(_highlightFill, _highlightStroke, rect);
 
             foreach (var (y, syl) in _gutterEntries)
             {

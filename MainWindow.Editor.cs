@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using Notari.Models;
 
 namespace Notari
@@ -78,7 +79,54 @@ namespace Notari
 
         private static readonly Regex _bracketedContent = new(@"\[[^\]]*\]|\([^\)]*\)", RegexOptions.Compiled);
 
-        // Recursively flattens Span nesting so LineBreak and Run elements are always at the top level.
+        private IEnumerable<Run> GetAllRuns() =>
+            Editor.Document.Blocks
+                .OfType<Paragraph>()
+                .SelectMany(p => FlattenInlines(p.Inlines))
+                .OfType<Run>();
+
+        /// <summary>
+        /// Returns bounding rects for every whole-word occurrence of <paramref name="word"/> in the document.
+        /// Must be called on the UI thread.
+        /// </summary>
+        private List<Rect> FindWordRects(string word)
+        {
+            var rects = new List<Rect>();
+            int len = word.Length;
+
+            foreach (var run in GetAllRuns())
+            {
+                string text = run.Text;
+                int idx = 0;
+
+                while ((idx = text.IndexOf(word, idx, StringComparison.OrdinalIgnoreCase)) >= 0)
+                {
+                    bool prevOk = idx == 0             || !char.IsLetterOrDigit(text[idx - 1]);
+                    bool nextOk = idx + len >= text.Length || !char.IsLetterOrDigit(text[idx + len]);
+
+                    if (prevOk && nextOk)
+                    {
+                        var startPtr = run.ContentStart.GetPositionAtOffset(idx);
+                        var endPtr   = run.ContentStart.GetPositionAtOffset(idx + len);
+
+                        if (startPtr is not null && endPtr is not null)
+                        {
+                            var r0 = startPtr.GetCharacterRect(LogicalDirection.Forward);
+                            var r1 = endPtr.GetCharacterRect(LogicalDirection.Backward);
+
+                            if (!r0.IsEmpty && !r1.IsEmpty)
+                                rects.Add(new Rect(r0.Left, r0.Top, r1.Right - r0.Left, r0.Height));
+                        }
+                    }
+
+                    idx++;
+                }
+            }
+
+            return rects;
+        }
+
+        // Recursively flattensSpan nesting so LineBreak and Run elements are always at the top level.
         private static IEnumerable<Inline> FlattenInlines(InlineCollection inlines)
         {
             foreach (var inline in inlines)
@@ -151,6 +199,8 @@ namespace Notari
                     return;
                 }
 
+                _adorner?.SetHighlights(FindWordRects(word), stroke: Brushes.Red);
+
                 var result = await Task.Run(() =>
                 {
                     var phonetics    = _db.GetPhonetics(word);
@@ -215,6 +265,7 @@ namespace Notari
         private void ClearSidebar()
         {
             FocusLabel.Visibility = Visibility.Collapsed;
+            _adorner?.SetHighlights([]);
 
             WordInfoStrip.Visibility   = Visibility.Collapsed;
             WordInfoDivider.Visibility = Visibility.Collapsed;
