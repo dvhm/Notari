@@ -7,6 +7,7 @@
         xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
         mc:Ignorable="d"
         Title="Notari" Height="700" Width="1000"
+        Icon="notari-icon.ico"
         WindowStyle="None"
         Background="{StaticResource Brush.Background}"
         Foreground="{StaticResource Brush.TextPrimary}"
