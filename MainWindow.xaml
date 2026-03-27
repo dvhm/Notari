@@ -274,6 +274,13 @@
                         </StackPanel>
                         <Border x:Name="NotesDivider" Height="1" Background="{StaticResource Brush.Divider}"/>
 
+                        <!-- LOOKUP SPINNER -->
+                        <ProgressBar x:Name="LookupSpinner"
+                                     Height="2"
+                                     IsIndeterminate="True"
+                                     Visibility="Collapsed"
+                                     Style="{StaticResource Style.LookupSpinner}"/>
+
                         <!-- WORD INFO STRIP -->
                         <Border x:Name="WordInfoStrip"
                                 Visibility="Collapsed"

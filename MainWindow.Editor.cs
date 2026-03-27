@@ -291,9 +291,12 @@ namespace Notari
                 _adorner?.SetHighlights(
                     HighlightToggle.IsChecked == true ? FindWordRects(word) : []);
 
+                LookupSpinner.Visibility = Visibility.Visible;
+
                 bool sortByZipf = _settings.SortByZipf;
                 int limit = _settings.ResultLimit == 0 ? int.MaxValue : _settings.ResultLimit;
-                var result = await Task.Run(() =>
+                var minWait = Task.Delay(500, ct);
+                var resultTask = Task.Run(() =>
                 {
                     var phonetics    = _db.GetPhonetics(word);
                     var rhymes       = _db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text).ToList();
@@ -309,6 +312,10 @@ namespace Notari
                     var hyponyms  = _db.GetHyponyms(word, null, limit, sortByZipf).Select(r => r.Text).ToList();
                     return (phonetics, rhymes, multi, assonance, alliteration, synGroups, antonyms, hypernyms, hyponyms);
                 }, ct);
+
+                await Task.WhenAll(minWait, resultTask);
+                LookupSpinner.Visibility = Visibility.Collapsed;
+                var result = resultTask.Result;
 
                 // Word info strip
                 var primary = result.phonetics.FirstOrDefault();
@@ -345,7 +352,10 @@ namespace Notari
 
                 ScrollToTypewriterPosition();
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException)
+            {
+                LookupSpinner.Visibility = Visibility.Collapsed;
+            }
         }
 
         private static void SetWordGroup(
@@ -371,7 +381,8 @@ namespace Notari
 
         private void ClearSidebar()
         {
-            FocusLabel.Visibility = Visibility.Collapsed;
+            FocusLabel.Visibility    = Visibility.Collapsed;
+            LookupSpinner.Visibility = Visibility.Collapsed;
             _adorner?.SetHighlights([]);
 
             WordInfoStrip.Visibility   = Visibility.Collapsed;
