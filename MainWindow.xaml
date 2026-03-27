@@ -21,7 +21,9 @@
         <CommandBinding Command="local:Commands.SaveAs"   Executed="OnSaveAs"/>
         <CommandBinding Command="local:Commands.Exit"     Executed="OnExit"/>
         <CommandBinding Command="local:Commands.Settings" Executed="OnSettings"/>
-        <CommandBinding Command="local:Commands.About" Executed="OnAbout"/>
+        <CommandBinding Command="local:Commands.About"    Executed="OnAbout"/>
+        <CommandBinding Command="local:Commands.Find"     Executed="OnFind"/>
+        <CommandBinding Command="local:Commands.Replace"  Executed="OnReplace"/>
     </Window.CommandBindings>
 
     <WindowChrome.WindowChrome>
@@ -106,6 +108,13 @@
                     <Separator/>
                     <MenuItem Header="Select All" Command="SelectAll">
                         <MenuItem.Icon><ui:SymbolIcon Symbol="SelectAllOn"/></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Find..."    Command="local:Commands.Find">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="Search"/></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Replace..." Command="local:Commands.Replace">
+                        <MenuItem.Icon><ui:SymbolIcon Symbol="ArrowSwap"/></MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Settings" Command="local:Commands.Settings">
@@ -255,6 +264,84 @@
                              TextChanged="OnEditorTextChanged"/>
             </Border>
         </ScrollViewer>
+
+            <!-- Find / Replace bar -->
+            <Border x:Name="FindBar"
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Margin="0,8,24,0"
+                    Panel.ZIndex="2"
+                    Visibility="Collapsed"
+                    Background="{StaticResource Brush.Surface}"
+                    BorderBrush="{StaticResource Brush.Divider}"
+                    BorderThickness="1"
+                    Padding="10,8">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.25" BlurRadius="12" ShadowDepth="3" Direction="270"/>
+                </Border.Effect>
+                <StackPanel>
+                    <!-- Find row -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="FindInput"
+                                 Width="200"
+                                 Background="{StaticResource Brush.Background}"
+                                 Foreground="{StaticResource Brush.TextPrimary}"
+                                 BorderBrush="{StaticResource Brush.Divider}"
+                                 BorderThickness="1"
+                                 Padding="6,4"
+                                 FontSize="{StaticResource FontSize.Small}"
+                                 KeyDown="OnFindInputKeyDown"
+                                 TextChanged="OnFindTextChanged"/>
+                        <TextBlock x:Name="MatchLabel"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,4,0"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   MinWidth="40"/>
+                        <Button Style="{StaticResource Style.ToolbarButton}" Click="OnFindPrev"  ToolTip="Previous (Shift+Enter)">
+                            <ui:SymbolIcon Symbol="ChevronUp" FontSize="12"/>
+                        </Button>
+                        <Button Style="{StaticResource Style.ToolbarButton}" Click="OnFindNext"  ToolTip="Next (Enter)" Margin="2,0,0,0">
+                            <ui:SymbolIcon Symbol="ChevronDown" FontSize="12"/>
+                        </Button>
+                        <Button Style="{StaticResource Style.ToolbarButton}" Click="OnFindClose" ToolTip="Close (Esc)" Margin="4,0,0,0">
+                            <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Options row -->
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <CheckBox x:Name="MatchCaseCheck"
+                                  Content="Match case"
+                                  FontSize="{StaticResource FontSize.XSmall}"
+                                  Foreground="{StaticResource Brush.TextSecondary}"
+                                  Checked="OnFindOptionChanged"
+                                  Unchecked="OnFindOptionChanged"/>
+                        <CheckBox x:Name="WholeWordCheck"
+                                  Content="Whole word"
+                                  FontSize="{StaticResource FontSize.XSmall}"
+                                  Foreground="{StaticResource Brush.TextSecondary}"
+                                  Margin="12,0,0,0"
+                                  Checked="OnFindOptionChanged"
+                                  Unchecked="OnFindOptionChanged"/>
+                    </StackPanel>
+
+                    <!-- Replace row (shown only for Ctrl+H) -->
+                    <StackPanel x:Name="ReplaceRow" Orientation="Horizontal" Margin="0,6,0,0" Visibility="Collapsed">
+                        <TextBox x:Name="ReplaceInput"
+                                 Width="200"
+                                 Background="{StaticResource Brush.Background}"
+                                 Foreground="{StaticResource Brush.TextPrimary}"
+                                 BorderBrush="{StaticResource Brush.Divider}"
+                                 BorderThickness="1"
+                                 Padding="6,4"
+                                 FontSize="{StaticResource FontSize.Small}"/>
+                        <Button Content="Replace"     Width="66" Margin="8,0,0,0" Style="{StaticResource Style.Button.Accent}" Click="OnReplaceOne"  FontSize="{StaticResource FontSize.XSmall}"/>
+                        <Button Content="Replace All" Width="80" Margin="4,0,0,0" Style="{StaticResource Style.Button.Accent}" Click="OnReplaceAll"  FontSize="{StaticResource FontSize.XSmall}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- Sidebar collapse/expand tab -->
             <ToggleButton x:Name="SidebarToggle"

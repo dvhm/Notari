@@ -31,4 +31,12 @@ public static class Commands
     public static readonly RoutedUICommand About = new(
         "About", nameof(About), typeof(Commands),
         [new KeyGesture(Key.OemQuestion, ModifierKeys.Control)]);
+
+    public static readonly RoutedUICommand Find = new(
+        "Find", nameof(Find), typeof(Commands),
+        [new KeyGesture(Key.F, ModifierKeys.Control)]);
+
+    public static readonly RoutedUICommand Replace = new(
+        "Replace", nameof(Replace), typeof(Commands),
+        [new KeyGesture(Key.H, ModifierKeys.Control)]);
 }

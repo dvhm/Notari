@@ -26,6 +26,7 @@ namespace Notari
             Loaded += (_, _) =>
             {
                 InitAdorner();
+                InitFindReplace();
                 ApplySettings(_settings, save: false);
                 if (!_settings.HasShownStartMessage)
                 {
