@@ -7,44 +7,80 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
+        WindowStyle="None"
         Background="{StaticResource Brush.Surface}"
         Foreground="{StaticResource Brush.TextPrimary}"
         FontFamily="{StaticResource Font.Primary}"
         FontSize="{StaticResource FontSize.Base}">
 
-    <StackPanel Margin="24">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
 
-        <!-- Icon + message -->
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-            <ui:SymbolIcon Symbol="TextBulletListSquareWarning"
-                           Foreground="{StaticResource Brush.Warning}"
-                           FontSize="28"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Border Grid.Row="0"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock Text="Unsaved changes"
+                           HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Margin="0,2,14,0"/>
-            <StackPanel>
-                <TextBlock Text="You've made changes."
-                           FontSize="{StaticResource FontSize.Medium}"
-                           FontWeight="{StaticResource FontWeight.SemiBold}"
-                           Margin="0,0,0,6"/>
-                <TextBlock Text="Discard your changes and continue?"
                            Foreground="{StaticResource Brush.TextSecondary}"
-                           TextWrapping="Wrap"/>
+                           FontSize="{StaticResource FontSize.Small}"
+                           IsHitTestVisible="False"/>
+                <Button Style="{StaticResource Style.CaptionButton.Close}"
+                        HorizontalAlignment="Right"
+                        Click="OnCancel">
+                    <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <StackPanel Grid.Row="1" Margin="24">
+
+            <!-- Icon + message -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                <ui:SymbolIcon Symbol="TextBulletListSquareWarning"
+                               Foreground="{StaticResource Brush.Warning}"
+                               FontSize="28"
+                               VerticalAlignment="Center"
+                               Margin="0,2,14,0"/>
+                <StackPanel>
+                    <TextBlock Text="You've made changes."
+                               FontSize="{StaticResource FontSize.Medium}"
+                               FontWeight="{StaticResource FontWeight.SemiBold}"
+                               Margin="0,0,0,6"/>
+                    <TextBlock Text="Discard your changes and continue?"
+                               Foreground="{StaticResource Brush.TextSecondary}"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button x:Name="BtnCancel"
+                        Content="Cancel"
+                        Width="90"
+                        Margin="0,0,8,0"
+                        Click="OnCancel"/>
+                <Button x:Name="BtnDiscard"
+                        Content="Discard"
+                        Width="90"
+                        Style="{StaticResource Style.Button.Accent}"
+                        Click="OnDiscard"/>
             </StackPanel>
         </StackPanel>
-
-        <!-- Buttons -->
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right">
-            <Button x:Name="BtnCancel"
-                    Content="Cancel"
-                    Width="90"
-                    Margin="0,0,8,0"
-                    Click="OnCancel"/>
-            <Button x:Name="BtnDiscard"
-                    Content="Discard"
-                    Width="90"
-                    Style="{StaticResource Style.Button.Accent}"
-                    Click="OnDiscard"/>
-        </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
