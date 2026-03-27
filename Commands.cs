@@ -27,4 +27,8 @@ public static class Commands
     public static readonly RoutedUICommand Settings = new(
         "Settings", nameof(Settings), typeof(Commands),
         [new KeyGesture(Key.OemComma, ModifierKeys.Control)]);
+
+    public static readonly RoutedUICommand About = new(
+        "About", nameof(About), typeof(Commands),
+        [new KeyGesture(Key.OemQuestion, ModifierKeys.Control)]);
 }

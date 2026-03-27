@@ -21,6 +21,7 @@
         <CommandBinding Command="local:Commands.SaveAs"   Executed="OnSaveAs"/>
         <CommandBinding Command="local:Commands.Exit"     Executed="OnExit"/>
         <CommandBinding Command="local:Commands.Settings" Executed="OnSettings"/>
+        <CommandBinding Command="local:Commands.About" Executed="OnAbout"/>
     </Window.CommandBindings>
 
     <WindowChrome.WindowChrome>
@@ -112,7 +113,9 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="View"/>
-                <MenuItem Header="Help"/>
+                <MenuItem Header="Help">
+                    <MenuItem Header="About Notari" Command="local:Commands.About"/>
+                </MenuItem>
             </Menu>
 
                 <!-- Window caption buttons -->

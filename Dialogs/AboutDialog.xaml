@@ -1,0 +1,109 @@
+﻿<Window x:Class="Notari.Dialogs.AboutDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
+        Title="About"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        WindowStyle="None"
+        Background="{StaticResource Brush.Surface}"
+        Foreground="{StaticResource Brush.TextPrimary}"
+        FontFamily="{StaticResource Font.Primary}"
+        FontSize="{StaticResource FontSize.Base}">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style x:Key="Style.Swatch" TargetType="RadioButton">
+            <Setter Property="Width" Value="26"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}"/>
+                            <Ellipse x:Name="Ring"
+                                     Stroke="White"
+                                     StrokeThickness="2"
+                                     Opacity="0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Ring" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Border Grid.Row="0"
+        Background="{StaticResource Brush.Surface}"
+        BorderBrush="{StaticResource Brush.Divider}"
+        BorderThickness="0,0,0,1">
+            <Grid>
+            <TextBlock Text="About Notari"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource Brush.TextSecondary}"
+                    FontSize="{StaticResource FontSize.Small}"
+                    IsHitTestVisible="False"/>
+                <Button Style="{StaticResource Style.CaptionButton.Close}"
+                HorizontalAlignment="Right"
+                Click="OnOk">
+                    <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <StackPanel Grid.Row="1" Margin="24">
+            <TextBlock Text="Notari v1.1.0"/>
+            <TextBlock Text="A minimal open-source songwriting tool"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"/>
+            
+            <Separator Margin="0,10,0,10" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                <TextBlock Text="E-MAIL"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.XSmall}"/>
+                <TextBlock Text="david@hoormann.dev"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,10,0,0">
+                <TextBlock Text="SOURCE CODE"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.XSmall}"/>
+                <TextBlock Text="github.com/dvhm/notari"
+                           Foreground="{StaticResource Brush.Primary}"
+                           Cursor="Hand"
+                           MouseLeftButtonUp="OpenLink"/>
+            </StackPanel>
+            <Separator Margin="0,10,0,10" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+            <TextBlock Text="Licensed under GPL v3.0"
+            Foreground="{StaticResource Brush.TextSecondary}"
+            FontSize="{StaticResource FontSize.XSmall}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button x:Name="BtnOk"    Content="OK"     Width="90" Style="{StaticResource Style.Button.Accent}" Click="OnOk"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>

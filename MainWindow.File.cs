@@ -99,6 +99,11 @@ namespace Notari
             if (dlg.ShowDialog() == true)
                 ApplySettings(dlg.Result);
         }
+        private void OnAbout(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new Notari.Dialogs.AboutDialog(this);
+            dlg.ShowDialog();
+        }
 
         private void LoadFile(string path)
         {
