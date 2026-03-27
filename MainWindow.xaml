@@ -248,7 +248,7 @@
                              FontFamily="{StaticResource Font.Primary}"
                              FontSize="{StaticResource FontSize.Base}"
                              AcceptsTab="True"
-                             SpellCheck.IsEnabled="True"
+                             SpellCheck.IsEnabled="False"
                              VerticalScrollBarVisibility="Disabled"
                              HorizontalScrollBarVisibility="Disabled"
                              SelectionChanged="OnEditorSelectionChanged"

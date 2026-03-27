@@ -122,9 +122,6 @@ namespace Notari
             _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();
 
-            // Spell check
-            Editor.SpellCheck.IsEnabled = s.SpellCheck;
-
             // Sidebar section visibility
             NotesSection.Visibility    = s.ShowNotes           ? Visibility.Visible : Visibility.Collapsed;
             NotesDivider.Visibility    = s.ShowNotes           ? Visibility.Visible : Visibility.Collapsed;

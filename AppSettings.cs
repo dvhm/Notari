@@ -18,7 +18,6 @@ public sealed class AppSettings
 
     public bool SortByZipf             { get; set; } = false;
     public int  ResultLimit             { get; set; } = 0;
-    public bool SpellCheck              { get; set; } = true;
     public bool AutoSave                { get; set; } = false;
     public int  AutoSaveIntervalSeconds { get; set; } = 300;
     public bool ShowNotes               { get; set; } = true;

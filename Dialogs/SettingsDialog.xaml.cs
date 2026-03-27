@@ -8,7 +8,7 @@ public partial class SettingsDialog : Window
 {
     private readonly Dictionary<RadioButton, string> _accentMap;
 
-    public AppSettings Result { get; private set; } = new();
+    public AppSettings Result { get; private set; }
 
     public SettingsDialog(Window owner, AppSettings current)
     {
@@ -45,7 +45,6 @@ public partial class SettingsDialog : Window
         DimRoundCheck.IsChecked    = current.DimRound;
         DimCurlyCheck.IsChecked    = current.DimCurly;
 
-        SpellCheckBox.IsChecked       = current.SpellCheck;
         TypewriterModeCheck.IsChecked = current.TypewriterMode;
 
         ShowNotesCheck.IsChecked    = current.ShowNotes;
@@ -96,7 +95,6 @@ public partial class SettingsDialog : Window
             DimCurly                = DimCurlyCheck.IsChecked    == true,
             SortByZipf              = SortByZipfCheck.IsChecked  == true,
             ResultLimit             = resultLimit,
-            SpellCheck              = SpellCheckBox.IsChecked    == true,
             AutoSave                = AutoSaveCheck.IsChecked    == true,
             AutoSaveIntervalSeconds = autoSaveInterval,
             ShowNotes               = ShowNotesCheck.IsChecked   == true,

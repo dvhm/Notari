@@ -124,7 +124,6 @@
                    FontSize="{StaticResource FontSize.XSmall}"
                    Margin="0,0,0,10"/>
 
-                <CheckBox x:Name="SpellCheckBox" Content="Spell check" Margin="0,0,0,8"/>
                 <CheckBox x:Name="TypewriterModeCheck" Content="Typewriter mode (keep caret centered)"/>
 
                 <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
