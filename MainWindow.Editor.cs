@@ -105,8 +105,19 @@ namespace Notari
 
             _allBrackets = BuildBracketRegex(s);
 
-            if (System.Windows.Media.ColorConverter.ConvertFromString(s.HighlightColor) is System.Windows.Media.Color c)
-                _adorner?.SetHighlightBrush(new System.Windows.Media.SolidColorBrush(c));
+            // Accent color — replace brush entries so DynamicResource bindings update everywhere,
+            // and derive Brush.Highlight as the accent at 40% alpha (used by adorner + toggle button)
+            if (System.Windows.Media.ColorConverter.ConvertFromString(s.AccentColor) is System.Windows.Media.Color accent)
+            {
+                Application.Current.Resources["Brush.Primary"] = new System.Windows.Media.SolidColorBrush(accent);
+                static byte Lighten(byte ch) => (byte)Math.Min(255, ch + (255 - ch) / 4);
+                var hover = System.Windows.Media.Color.FromRgb(Lighten(accent.R), Lighten(accent.G), Lighten(accent.B));
+                Application.Current.Resources["Brush.PrimaryHover"] = new System.Windows.Media.SolidColorBrush(hover);
+                var highlight = System.Windows.Media.Color.FromArgb(0x66, accent.R, accent.G, accent.B);
+                var highlightBrush = new System.Windows.Media.SolidColorBrush(highlight);
+                Application.Current.Resources["Brush.Highlight"] = highlightBrush;
+                _adorner?.SetHighlightBrush(highlightBrush);
+            }
 
             _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();

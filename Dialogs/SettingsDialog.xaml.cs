@@ -6,7 +6,7 @@ namespace Notari.Dialogs;
 
 public partial class SettingsDialog : Window
 {
-    private readonly Dictionary<RadioButton, string> _swatchMap;
+    private readonly Dictionary<RadioButton, string> _accentMap;
 
     public AppSettings Result { get; private set; } = new();
 
@@ -16,29 +16,29 @@ public partial class SettingsDialog : Window
         Owner = owner;
         Result = current;
 
-        _swatchMap = new()
+        _accentMap = new()
         {
-            { SwatchPurple,  "#66C084FC" },
-            { SwatchPink,    "#66FC84E0" },
-            { SwatchRed,     "#66FC8484" },
-            { SwatchOrange,  "#66FCBE84" },
-            { SwatchYellow,  "#66FCE884" },
-            { SwatchGreen,   "#6684FC98" },
-            { SwatchCyan,    "#6684ECFC" },
-            { SwatchNeutral, "#66AAAAAA" },
+            { AccentBlue,   "#FF4FC3F7" },
+            { AccentPurple, "#FFB07EFC" },
+            { AccentPink,   "#FFFC7EC8" },
+            { AccentRed,    "#FFEF5350" },
+            { AccentOrange, "#FFFFA040" },
+            { AccentYellow, "#FFFFC107" },
+            { AccentGreen,  "#FF4CAF50" },
+            { AccentCyan,   "#FF26C6DA" },
         };
 
         bool found = false;
-        foreach (var (btn, color) in _swatchMap)
+        foreach (var (btn, color) in _accentMap)
         {
-            if (color.Equals(current.HighlightColor, StringComparison.OrdinalIgnoreCase))
+            if (color.Equals(current.AccentColor, StringComparison.OrdinalIgnoreCase))
             {
                 btn.IsChecked = true;
                 found = true;
                 break;
             }
         }
-        if (!found) SwatchPurple.IsChecked = true;
+        if (!found) AccentBlue.IsChecked = true;
 
         DimBracketsCheck.IsChecked = current.DimBrackets;
         DimSquareCheck.IsChecked   = current.DimSquare;
@@ -77,8 +77,8 @@ public partial class SettingsDialog : Window
 
     private void OnOk(object sender, RoutedEventArgs e)
     {
-        var selectedColor = _swatchMap
-            .FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? "#66C084FC";
+        var selectedAccent = _accentMap
+            .FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? "#FF4FC3F7";
 
         var resultLimit = ResultLimitBox.SelectedItem is ComboBoxItem rli
             ? int.Parse((string)rli.Tag) : 0;
@@ -89,7 +89,7 @@ public partial class SettingsDialog : Window
 
         Result = new AppSettings
         {
-            HighlightColor          = selectedColor,
+            AccentColor             = selectedAccent,
             DimBrackets             = DimBracketsCheck.IsChecked == true,
             DimSquare               = DimSquareCheck.IsChecked   == true,
             DimRound                = DimRoundCheck.IsChecked    == true,

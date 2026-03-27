@@ -1,4 +1,4 @@
-<Window x:Class="Notari.Dialogs.SettingsDialog"
+﻿<Window x:Class="Notari.Dialogs.SettingsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
@@ -76,25 +76,25 @@
         <!-- Content -->
         <StackPanel Grid.Row="1" Margin="24">
 
-            <!-- HIGHLIGHTS section -->
-            <TextBlock Text="HIGHLIGHTS"
+            <!-- ACCENT COLOR section -->
+            <TextBlock Text="ACCENT COLOR"
                        Foreground="{StaticResource Brush.TextSecondary}"
                        FontSize="{StaticResource FontSize.XSmall}"
                        Margin="0,0,0,10"/>
 
-            <TextBlock Text="Highlight color"
+            <TextBlock Text="Accent color"
                        FontSize="{StaticResource FontSize.Small}"
-                       Margin="0,0,0,8"/>
+                       Margin="0,8,0,8"/>
 
             <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="SwatchPurple"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66C084FC"/>
-                <RadioButton x:Name="SwatchPink"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC84E0"/>
-                <RadioButton x:Name="SwatchRed"     Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC8484"/>
-                <RadioButton x:Name="SwatchOrange"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCBE84"/>
-                <RadioButton x:Name="SwatchYellow"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCE884"/>
-                <RadioButton x:Name="SwatchGreen"   Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684FC98"/>
-                <RadioButton x:Name="SwatchCyan"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684ECFC"/>
-                <RadioButton x:Name="SwatchNeutral" Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66AAAAAA"/>
+                <RadioButton x:Name="AccentBlue"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FF4FC3F7"/>
+                <RadioButton x:Name="AccentPurple" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FFB07EFC"/>
+                <RadioButton x:Name="AccentPink"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FFFC7EC8"/>
+                <RadioButton x:Name="AccentRed"    Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FFEF5350"/>
+                <RadioButton x:Name="AccentOrange" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FFFFA040"/>
+                <RadioButton x:Name="AccentYellow" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FFFFC107"/>
+                <RadioButton x:Name="AccentGreen"  Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FF4CAF50"/>
+                <RadioButton x:Name="AccentCyan"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="#FF26C6DA"/>
             </StackPanel>
 
             <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
