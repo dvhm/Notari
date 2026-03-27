@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace Notari.Dialogs;
 
@@ -43,6 +44,12 @@ public partial class SettingsDialog : Window
         DimSquareCheck.IsChecked   = current.DimSquare;
         DimRoundCheck.IsChecked    = current.DimRound;
         DimCurlyCheck.IsChecked    = current.DimCurly;
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
     }
 
     private void OnOk(object sender, RoutedEventArgs e)

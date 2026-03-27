@@ -7,10 +7,18 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
+        WindowStyle="None"
         Background="{StaticResource Brush.Surface}"
         Foreground="{StaticResource Brush.TextPrimary}"
         FontFamily="{StaticResource Font.Primary}"
         FontSize="{StaticResource FontSize.Base}">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <Style x:Key="Style.Swatch" TargetType="RadioButton">
@@ -39,53 +47,81 @@
         </Style>
     </Window.Resources>
 
-    <StackPanel Margin="24">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <!-- HIGHLIGHTS section -->
-        <TextBlock Text="HIGHLIGHTS"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
+        <!-- Custom title bar -->
+        <Border Grid.Row="0"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock Text="Settings"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"
+                           IsHitTestVisible="False"/>
+                <Button Style="{StaticResource Style.CaptionButton.Close}"
+                        HorizontalAlignment="Right"
+                        Click="OnCancel">
+                    <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                </Button>
+            </Grid>
+        </Border>
 
-        <TextBlock Text="Highlight color"
-                   FontSize="{StaticResource FontSize.Small}"
-                   Margin="0,0,0,8"/>
+        <!-- Content -->
+        <StackPanel Grid.Row="1" Margin="24">
 
-        <StackPanel Orientation="Horizontal">
-            <RadioButton x:Name="SwatchPurple"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66C084FC"/>
-            <RadioButton x:Name="SwatchPink"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC84E0"/>
-            <RadioButton x:Name="SwatchRed"     Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC8484"/>
-            <RadioButton x:Name="SwatchOrange"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCBE84"/>
-            <RadioButton x:Name="SwatchYellow"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCE884"/>
-            <RadioButton x:Name="SwatchGreen"   Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684FC98"/>
-            <RadioButton x:Name="SwatchCyan"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684ECFC"/>
-            <RadioButton x:Name="SwatchNeutral" Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66AAAAAA"/>
+            <!-- HIGHLIGHTS section -->
+            <TextBlock Text="HIGHLIGHTS"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <TextBlock Text="Highlight color"
+                       FontSize="{StaticResource FontSize.Small}"
+                       Margin="0,0,0,8"/>
+
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="SwatchPurple"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66C084FC"/>
+                <RadioButton x:Name="SwatchPink"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC84E0"/>
+                <RadioButton x:Name="SwatchRed"     Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FC8484"/>
+                <RadioButton x:Name="SwatchOrange"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCBE84"/>
+                <RadioButton x:Name="SwatchYellow"  Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66FCE884"/>
+                <RadioButton x:Name="SwatchGreen"   Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684FC98"/>
+                <RadioButton x:Name="SwatchCyan"    Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#6684ECFC"/>
+                <RadioButton x:Name="SwatchNeutral" Style="{StaticResource Style.Swatch}" GroupName="HighlightColor" Background="#66AAAAAA"/>
+            </StackPanel>
+
+            <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <!-- BRACKET DIMMING section -->
+            <TextBlock Text="BRACKET DIMMING"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="DimBracketsCheck" Content="Dim bracketed content" Margin="0,0,0,12"/>
+
+            <StackPanel x:Name="BracketTypePanel" Margin="16,0,0,0"
+                        IsEnabled="{Binding IsChecked, ElementName=DimBracketsCheck}">
+                <CheckBox x:Name="DimSquareCheck" Content="[ ]  Square brackets" Margin="0,0,0,6"/>
+                <CheckBox x:Name="DimRoundCheck"  Content="( )  Round brackets"  Margin="0,0,0,6"/>
+                <CheckBox x:Name="DimCurlyCheck">
+                    <CheckBox.Content>{ }  Curly brackets</CheckBox.Content>
+                </CheckBox>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button x:Name="BtnCancel" Content="Cancel" Width="90" Margin="0,0,8,0" Click="OnCancel"/>
+                <Button x:Name="BtnOk"    Content="OK"     Width="90" Style="{StaticResource Style.Button.Accent}" Click="OnOk"/>
+            </StackPanel>
+
         </StackPanel>
-
-        <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
-
-        <!-- BRACKET DIMMING section -->
-        <TextBlock Text="BRACKET DIMMING"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
-
-        <CheckBox x:Name="DimBracketsCheck" Content="Dim bracketed content" Margin="0,0,0,12"/>
-
-        <StackPanel x:Name="BracketTypePanel" Margin="16,0,0,0"
-                    IsEnabled="{Binding IsChecked, ElementName=DimBracketsCheck}">
-            <CheckBox x:Name="DimSquareCheck" Content="[ ]  Square brackets" Margin="0,0,0,6"/>
-            <CheckBox x:Name="DimRoundCheck"  Content="( )  Round brackets"  Margin="0,0,0,6"/>
-            <CheckBox x:Name="DimCurlyCheck">
-                <CheckBox.Content>{ }  Curly brackets</CheckBox.Content>
-            </CheckBox>
-        </StackPanel>
-
-        <!-- Buttons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button x:Name="BtnCancel" Content="Cancel" Width="90" Margin="0,0,8,0" Click="OnCancel"/>
-            <Button x:Name="BtnOk"    Content="OK"     Width="90" Style="{StaticResource Style.Button.Accent}" Click="OnOk"/>
-        </StackPanel>
-
-    </StackPanel>
+    </Grid>
 </Window>

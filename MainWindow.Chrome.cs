@@ -6,19 +6,10 @@ namespace Notari
 {
     public partial class MainWindow : Window
     {
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
-
-        private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-        private const int DWMWCP_ROUNDSMALL              = 3;
-        private const int DWMWCP_ROUND                   = 2;
-
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            var hwnd = new WindowInteropHelper(this).Handle;
-            int pref = DWMWCP_ROUND;
-            DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int));
+            NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
         }
 
         private void OnCaptionMinimize(object sender, RoutedEventArgs e) =>
