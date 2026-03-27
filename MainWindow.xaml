@@ -219,7 +219,7 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="220"/>
             </Grid.ColumnDefinitions>
 
         <ScrollViewer x:Name="EditorCanvas"
@@ -256,8 +256,20 @@
             </Border>
         </ScrollViewer>
 
-            <Border Grid.Column="1"
-                    Background="{StaticResource Brush.Surface}"
+            <!-- Sidebar collapse/expand tab -->
+            <ToggleButton x:Name="SidebarToggle"
+                          Grid.Column="0"
+                          Style="{StaticResource Style.SidebarToggle}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Margin="0,12,0,0"
+                          Panel.ZIndex="1"
+                          ToolTip="Toggle sidebar"
+                          Checked="OnSidebarToggled"
+                          Unchecked="OnSidebarToggled"/>
+
+            <Border x:Name="Sidebar"
+                    Grid.Column="1"
                     BorderBrush="{StaticResource Brush.Divider}"
                     BorderThickness="1,0,0,0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
