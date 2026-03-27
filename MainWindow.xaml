@@ -228,6 +228,14 @@
                                   Unchecked="OnHighlightToggled">
                         <ui:SymbolIcon Symbol="Highlight"/>
                     </ToggleButton>
+                    <ToggleButton x:Name="SyllableToggle"
+                                  Style="{StaticResource Style.ToolbarToggleButton}"
+                                  ToolTip="Show syllable counts"
+                                  Margin="2,0,0,0"
+                                  Checked="OnSyllableToggled"
+                                  Unchecked="OnSyllableToggled">
+                        <ui:SymbolIcon Symbol="TextNumberList"/>
+                    </ToggleButton>
                     <ToggleButton x:Name="RhymeSchemeToggle"
                                   Style="{StaticResource Style.ToolbarToggleButton}"
                                   ToolTip="Show rhyme scheme"

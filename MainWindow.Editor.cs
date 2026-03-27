@@ -41,6 +41,11 @@ namespace Notari
 
         private async void UpdateSyllableCounts()
         {
+            if (SyllableToggle?.IsChecked != true)
+            {
+                _adorner?.SetGutterEntries([]);
+                return;
+            }
             _syllableCts.Cancel();
             _syllableCts.Dispose();
             _syllableCts = new CancellationTokenSource();
@@ -407,6 +412,16 @@ namespace Notari
                 }
             }
             catch (OperationCanceledException) { }
+        }
+
+        private void OnSyllableToggled(object sender, RoutedEventArgs e)
+        {
+            if (SyllableToggle.IsChecked != true)
+            {
+                _adorner?.SetGutterEntries([]);
+                return;
+            }
+            UpdateSyllableCounts();
         }
 
         private void OnHighlightToggled(object sender, RoutedEventArgs e)
