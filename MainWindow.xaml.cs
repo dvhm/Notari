@@ -27,7 +27,7 @@ namespace Notari
             {
                 InitAdorner();
                 ApplySettings(_settings, save: false);
-                if (true) // if (!_settings.HasShownStartMessage)
+                if (!_settings.HasShownStartMessage)
                 {
                     _settings.HasShownStartMessage = true;
                     _settings.Save();
