@@ -161,13 +161,6 @@
                 <!-- Right side: highlight toggle + settings -->
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <Separator Margin="6,4"/>
-                    <ToggleButton x:Name="HighlightToggle"
-                                  Style="{StaticResource Style.ToolbarToggleButton}"
-                                  ToolTip="Highlight matching words"
-                                  Checked="OnHighlightToggled"
-                                  Unchecked="OnHighlightToggled">
-                        <ui:SymbolIcon Symbol="Highlight"/>
-                    </ToggleButton>
                     <Button Style="{StaticResource Style.ToolbarButton}"
                             Command="local:Commands.Settings"
                             ToolTip="Settings (Ctrl+,)"
@@ -199,7 +192,10 @@
                         <ui:SymbolIcon Symbol="TextUnderline"/>
                     </Button>
 
-                    <Separator Margin="6,4"/>
+                    <Border Width="1"
+                            Margin="10,0"
+                            Background="{StaticResource Brush.Divider}"
+                            VerticalAlignment="Stretch"/>
 
                     <Button Style="{StaticResource Style.ToolbarButton}"
                             Command="EditingCommands.AlignLeft"
@@ -221,6 +217,17 @@
                             Margin="2,0,0,0">
                         <ui:SymbolIcon Symbol="TextAlignRight"/>
                     </Button>
+                    <Border Width="1"
+                        Margin="10,0"
+                        Background="{StaticResource Brush.Divider}"
+                        VerticalAlignment="Stretch"/>
+                    <ToggleButton x:Name="HighlightToggle"
+                                  Style="{StaticResource Style.ToolbarToggleButton}"
+                                  ToolTip="Highlight matching words"
+                                  Checked="OnHighlightToggled"
+                                  Unchecked="OnHighlightToggled">
+                        <ui:SymbolIcon Symbol="Highlight"/>
+                    </ToggleButton>
                 </StackPanel>
             </DockPanel>
         </Border>
