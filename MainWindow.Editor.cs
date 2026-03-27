@@ -17,6 +17,7 @@ namespace Notari
             _adorner?.SetHighlights([]);
             _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();
+            UpdateRhymeScheme();
             ScrollToTypewriterPosition();
         }
 
@@ -236,10 +237,11 @@ namespace Notari
             }
         }
 
-        // Splits a paragraph at its LineBreak elements, yielding one (start pointer, text) per visual line.
-        private static IEnumerable<(TextPointer Start, string Text)> GetLineSegments(Paragraph para)
+        // Splits a paragraph at its LineBreak elements, yielding one (start pointer, end pointer, text) per visual line.
+        private static IEnumerable<(TextPointer Start, TextPointer End, string Text)> GetLineSegments(Paragraph para)
         {
             var segStart = para.ContentStart;
+            var segEnd   = para.ContentStart;
             var sb = new System.Text.StringBuilder();
             bool nextRunSetsStart = false;
 
@@ -247,7 +249,7 @@ namespace Notari
             {
                 if (inline is LineBreak)
                 {
-                    yield return (segStart, sb.ToString());
+                    yield return (segStart, segEnd, sb.ToString());
                     sb.Clear();
                     nextRunSetsStart = true;
                 }
@@ -258,11 +260,12 @@ namespace Notari
                         segStart = run.ContentStart;
                         nextRunSetsStart = false;
                     }
+                    segEnd = run.ContentEnd;
                     sb.Append(run.Text);
                 }
             }
 
-            yield return (segStart, sb.ToString());
+            yield return (segStart, segEnd, sb.ToString());
         }
 
         private static readonly (string Code, PartOfSpeech Pos)[] _posCodes =

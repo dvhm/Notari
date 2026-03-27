@@ -44,6 +44,8 @@ namespace Notari
             _lookupCts.Dispose();
             _syllableCts.Cancel();
             _syllableCts.Dispose();
+            _rhymeSchemeCts.Cancel();
+            _rhymeSchemeCts.Dispose();
             await _db.DisposeAsync();
             _autoSaveTimer?.Stop();
             base.OnClosed(e);

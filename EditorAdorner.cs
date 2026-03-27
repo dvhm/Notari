@@ -23,12 +23,14 @@ namespace Notari
         private readonly Brush    _dimBrush;
         private readonly Brush    _findMatchBrush;
         private readonly Brush    _findActiveMatchBrush;
+        private readonly Brush    _rhymeLabelBrush;
 
-        private IReadOnlyList<(double Y, int Syllables)> _gutterEntries  = [];
-        private IReadOnlyList<Rect>                      _highlights     = [];
-        private IReadOnlyList<Rect>                      _dimRects       = [];
-        private IReadOnlyList<Rect>                      _findMatches    = [];
-        private Rect?                                    _findActive     = null;
+        private IReadOnlyList<(double Y, int Syllables)>  _gutterEntries  = [];
+        private IReadOnlyList<Rect>                       _highlights     = [];
+        private IReadOnlyList<Rect>                       _dimRects       = [];
+        private IReadOnlyList<Rect>                       _findMatches    = [];
+        private Rect?                                     _findActive     = null;
+        private IReadOnlyList<(double Y, double X, string Label)> _rhymeLabels    = [];
 
         public EditorAdorner(RichTextBox editor) : base(editor)
         {
@@ -42,6 +44,7 @@ namespace Notari
             _dimBrush             = (Brush)res["Brush.Dim"];
             _findMatchBrush       = (Brush)res["Brush.FindMatch"];
             _findActiveMatchBrush = (Brush)res["Brush.FindMatchActive"];
+            _rhymeLabelBrush      = (Brush)res["Brush.TextDisabled"];
         }
 
         /// <summary>Sets the per-paragraph syllable counts and schedules a redraw.</summary>
@@ -68,6 +71,13 @@ namespace Notari
         public void SetDimRanges(IReadOnlyList<Rect> rects)
         {
             _dimRects = rects;
+            InvalidateVisual();
+        }
+
+        /// <summary>Sets inline rhyme-scheme labels (e.g. "(A)", "(B)"). Pass an empty list to clear.</summary>
+        public void SetRhymeLabels(IReadOnlyList<(double Y, double X, string Label)> labels)
+        {
+            _rhymeLabels = labels;
             InvalidateVisual();
         }
 
@@ -108,6 +118,20 @@ namespace Notari
 
                 // Right-align the number within the gutter area.
                 dc.DrawText(text, new Point(GutterRightX - text.Width, y));
+            }
+
+            foreach (var (y, x, label) in _rhymeLabels)
+            {
+                var text = new FormattedText(
+                    label,
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    _typeface,
+                    _fontSize,
+                    _rhymeLabelBrush,
+                    dpi);
+
+                dc.DrawText(text, new Point(x + 8, y));
             }
         }
     }
