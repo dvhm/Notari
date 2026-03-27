@@ -21,10 +21,14 @@ namespace Notari
         private readonly Brush    _brush;
         private Brush _highlightBrush;
         private readonly Brush    _dimBrush;
+        private readonly Brush    _findMatchBrush;
+        private readonly Brush    _findActiveMatchBrush;
 
-        private IReadOnlyList<(double Y, int Syllables)> _gutterEntries = [];
-        private IReadOnlyList<Rect>                      _highlights    = [];
-        private IReadOnlyList<Rect>                      _dimRects      = [];
+        private IReadOnlyList<(double Y, int Syllables)> _gutterEntries  = [];
+        private IReadOnlyList<Rect>                      _highlights     = [];
+        private IReadOnlyList<Rect>                      _dimRects       = [];
+        private IReadOnlyList<Rect>                      _findMatches    = [];
+        private Rect?                                    _findActive     = null;
 
         public EditorAdorner(RichTextBox editor) : base(editor)
         {
@@ -34,8 +38,10 @@ namespace Notari
             _typeface       = new Typeface((FontFamily)res["Font.Primary"], FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
             _fontSize       = (double)res["FontSize.XSmall"];
             _brush          = (Brush)res["Brush.TextSecondary"];
-            _highlightBrush = (Brush)res["Brush.Highlight"];
-            _dimBrush       = (Brush)res["Brush.Dim"];
+            _highlightBrush       = (Brush)res["Brush.Highlight"];
+            _dimBrush             = (Brush)res["Brush.Dim"];
+            _findMatchBrush       = (Brush)res["Brush.FindMatch"];
+            _findActiveMatchBrush = (Brush)res["Brush.FindMatchActive"];
         }
 
         /// <summary>Sets the per-paragraph syllable counts and schedules a redraw.</summary>
@@ -65,6 +71,14 @@ namespace Notari
             InvalidateVisual();
         }
 
+        /// <summary>Sets find-match highlight rectangles. Pass empty list and null to clear.</summary>
+        public void SetFindHighlights(IReadOnlyList<Rect> matches, Rect? active)
+        {
+            _findMatches = matches;
+            _findActive  = active;
+            InvalidateVisual();
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
@@ -74,6 +88,12 @@ namespace Notari
 
             foreach (var rect in _highlights)
                 dc.DrawRoundedRectangle(_highlightBrush, null, rect, 2, 2);
+
+            foreach (var rect in _findMatches)
+                dc.DrawRoundedRectangle(_findMatchBrush, null, rect, 2, 2);
+
+            if (_findActive is Rect active)
+                dc.DrawRoundedRectangle(_findActiveMatchBrush, null, active, 2, 2);
 
             foreach (var (y, syl) in _gutterEntries)
             {

@@ -11,6 +11,7 @@ public partial class MainWindow
 {
     private List<(TextPointer Start, TextPointer End)> _matches = [];
     private int _matchIndex = -1;
+    private bool _findBarOpen = false;
     private readonly DispatcherTimer _findDebounce = new() { Interval = TimeSpan.FromMilliseconds(180) };
 
     private void InitFindReplace()
@@ -23,6 +24,8 @@ public partial class MainWindow
 
     private void OpenFindBar(bool showReplace)
     {
+        _findBarOpen = true;
+        _adorner?.SetHighlights([]);
         ReplaceRow.Visibility = showReplace ? Visibility.Visible : Visibility.Collapsed;
         FindBar.Visibility = Visibility.Visible;
         FindInput.Focus();
@@ -34,10 +37,12 @@ public partial class MainWindow
 
     private void CloseFindBar()
     {
+        _findBarOpen = false;
         _findDebounce.Stop();
         FindBar.Visibility = Visibility.Collapsed;
         _matches.Clear();
         _matchIndex = -1;
+        _adorner?.SetFindHighlights([], null);
         Editor.Focus();
     }
 
@@ -78,11 +83,35 @@ public partial class MainWindow
 
     private void SelectMatch(int index)
     {
-        var (start, end) = _matches[index];
-        Editor.Selection.Select(start, end);
-        Editor.Focus();
+        var (start, _) = _matches[index];
         start.Paragraph?.BringIntoView();
+        UpdateFindHighlights();
         UpdateMatchLabel();
+    }
+
+    private static Rect? GetMatchRect(TextPointer start, TextPointer end)
+    {
+        var r0 = start.GetCharacterRect(LogicalDirection.Forward);
+        var r1 = end.GetCharacterRect(LogicalDirection.Backward);
+        if (r0.IsEmpty || r1.IsEmpty) return null;
+        return new Rect(r0.Left, r0.Top, r1.Right - r0.Left, r0.Height);
+    }
+
+    private void UpdateFindHighlights()
+    {
+        if (_adorner is null) return;
+        var allRects = new List<Rect>(_matches.Count);
+        Rect? activeRect = null;
+        for (int i = 0; i < _matches.Count; i++)
+        {
+            var r = GetMatchRect(_matches[i].Start, _matches[i].End);
+            if (r is Rect rect)
+            {
+                allRects.Add(rect);
+                if (i == _matchIndex) activeRect = rect;
+            }
+        }
+        _adorner.SetFindHighlights(allRects, activeRect);
     }
 
     private void RefreshMatches()
@@ -91,7 +120,7 @@ public partial class MainWindow
         _matchIndex = -1;
 
         string term = FindInput.Text;
-        if (string.IsNullOrEmpty(term)) { UpdateMatchLabel(); return; }
+        if (string.IsNullOrEmpty(term)) { _adorner?.SetFindHighlights([], null); UpdateMatchLabel(); return; }
 
         bool matchCase  = MatchCaseCheck.IsChecked  == true;
         bool wholeWords = WholeWordCheck.IsChecked   == true;
@@ -134,6 +163,7 @@ public partial class MainWindow
         }
         else
         {
+            _adorner?.SetFindHighlights([], null);
             UpdateMatchLabel();
         }
     }

@@ -23,8 +23,10 @@
     <SolidColorBrush x:Key="Brush.Success"         Color="{StaticResource Color.Success}"/>
     <SolidColorBrush x:Key="Brush.Warning"         Color="{StaticResource Color.Warning}"/>
     <SolidColorBrush x:Key="Brush.Error"           Color="{StaticResource Color.Error}"/>
-    <SolidColorBrush x:Key="Brush.Highlight"       Color="{StaticResource Color.Highlight}"/>
-    <SolidColorBrush x:Key="Brush.Dim"            Color="{StaticResource Color.Dim}"/>
+    <SolidColorBrush x:Key="Brush.Highlight"          Color="{StaticResource Color.Highlight}"/>
+    <SolidColorBrush x:Key="Brush.Dim"               Color="{StaticResource Color.Dim}"/>
+    <SolidColorBrush x:Key="Brush.FindMatch"          Color="{StaticResource Color.FindMatch}"/>
+    <SolidColorBrush x:Key="Brush.FindMatchActive"    Color="{StaticResource Color.FindMatchActive}"/>
 
     <!-- Chrome -->
     <SolidColorBrush x:Key="Brush.Border"          Color="{StaticResource Color.Border}"/>

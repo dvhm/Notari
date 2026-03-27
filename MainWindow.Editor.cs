@@ -297,7 +297,7 @@ namespace Notari
                 }
 
                 _adorner?.SetHighlights(
-                    HighlightToggle.IsChecked == true ? FindWordRects(word) : []);
+                    !_findBarOpen && HighlightToggle.IsChecked == true ? FindWordRects(word) : []);
 
                 LookupSpinner.Visibility = Visibility.Visible;
 
