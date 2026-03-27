@@ -1,6 +1,6 @@
 namespace Notari.Models;
 
-public record SynGroup(PartOfSpeech Pos, IReadOnlyList<string> Words)
+public record SynGroup(PartOfSpeech Pos, IReadOnlyList<WordItem> Words)
 {
     public string Label => Pos switch
     {

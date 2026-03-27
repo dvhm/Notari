@@ -309,18 +309,21 @@ namespace Notari
                 var minWait = Task.Delay(500, ct);
                 var resultTask = Task.Run(() =>
                 {
+                    static List<WordItem> ToItems(IEnumerable<string> words) =>
+                        words.Select(w => new WordItem(w)).ToList();
+
                     var phonetics    = _db.GetPhonetics(word);
-                    var rhymes       = _db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text).ToList();
-                    var multi        = _db.GetMultisyllabicRhymes(word, limit, sortByZipf).Select(r => r.Text).ToList();
-                    var assonance    = _db.GetAssonance(word, limit, sortByZipf).Select(r => r.Text).ToList();
-                    var alliteration = _db.GetAlliteration(word, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var rhymes       = ToItems(_db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text));
+                    var multi        = ToItems(_db.GetMultisyllabicRhymes(word, limit, sortByZipf).Select(r => r.Text));
+                    var assonance    = ToItems(_db.GetAssonance(word, limit, sortByZipf).Select(r => r.Text));
+                    var alliteration = ToItems(_db.GetAlliteration(word, limit, sortByZipf).Select(r => r.Text));
                     var synGroups    = _posCodes
-                        .Select(p => new SynGroup(p.Pos, _db.GetSynonyms(word, pos: p.Code, limit: limit, sortByZipf: sortByZipf).Select(r => r.Text).ToList()))
+                        .Select(p => new SynGroup(p.Pos, ToItems(_db.GetSynonyms(word, pos: p.Code, limit: limit, sortByZipf: sortByZipf).Select(r => r.Text))))
                         .Where(g => g.Words.Count > 0)
                         .ToList();
-                    var antonyms  = _db.GetAntonyms(word, limit, sortByZipf).Select(r => r.Text).ToList();
-                    var hypernyms = _db.GetHypernyms(word, null, limit, sortByZipf).Select(r => r.Text).ToList();
-                    var hyponyms  = _db.GetHyponyms(word, null, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var antonyms  = ToItems(_db.GetAntonyms(word, limit, sortByZipf).Select(r => r.Text));
+                    var hypernyms = ToItems(_db.GetHypernyms(word, null, limit, sortByZipf).Select(r => r.Text));
+                    var hyponyms  = ToItems(_db.GetHyponyms(word, null, limit, sortByZipf).Select(r => r.Text));
                     return (phonetics, rhymes, multi, assonance, alliteration, synGroups, antonyms, hypernyms, hyponyms);
                 }, ct);
 
@@ -361,6 +364,18 @@ namespace Notari
                 SetWordGroup(HypernymsExpander, HypernymsList, HypernymsCount, result.hypernyms);
                 SetWordGroup(HyponymsExpander,  HyponymsList,  HyponymsCount,  result.hyponyms);
 
+                // Progressively enrich each item with its syllable count
+                var allItems = result.rhymes
+                    .Concat(result.multi)
+                    .Concat(result.assonance)
+                    .Concat(result.alliteration)
+                    .Concat(result.synGroups.SelectMany(g => g.Words))
+                    .Concat(result.antonyms)
+                    .Concat(result.hypernyms)
+                    .Concat(result.hyponyms)
+                    .ToList();
+                _ = EnrichWithSyllables(allItems, ct);
+
                 ScrollToTypewriterPosition();
             }
             catch (OperationCanceledException)
@@ -370,11 +385,26 @@ namespace Notari
         }
 
         private static void SetWordGroup(
-            Expander expander, ItemsControl list, TextBlock count, IReadOnlyList<string> words)
+            Expander expander, ItemsControl list, TextBlock count, IReadOnlyList<Models.WordItem> words)
         {
             list.ItemsSource    = words;
             count.Text          = words.Count > 0 ? $" ({words.Count})" : "";
             expander.Visibility = words.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async Task EnrichWithSyllables(List<Models.WordItem> items, CancellationToken ct)
+        {
+            try
+            {
+                foreach (var item in items)
+                {
+                    var syl = await Task.Run(() => _db.GetSyllableCount(item.Word), ct);
+                    if (syl.HasValue)
+                        item.SyllableLabel = $"({syl.Value})";
+                    await Task.Delay(15, ct);
+                }
+            }
+            catch (OperationCanceledException) { }
         }
 
         private void OnHighlightToggled(object sender, RoutedEventArgs e)

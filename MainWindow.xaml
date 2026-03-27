@@ -339,9 +339,10 @@
                                     <ItemsControl x:Name="RhymesList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -364,9 +365,10 @@
                                     <ItemsControl x:Name="MultisyllabicList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -389,9 +391,10 @@
                                     <ItemsControl x:Name="AssonanceList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -414,9 +417,10 @@
                                     <ItemsControl x:Name="AlliterationList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -466,9 +470,10 @@
                                                     <ItemsControl ItemsSource="{Binding Words}" Margin="8,0,0,6">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
-                                                                <TextBlock Text="{Binding}"
-                                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                                           Padding="0,2"/>
+                                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                                           </StackPanel>
                                                             </DataTemplate>
                                                         </ItemsControl.ItemTemplate>
                                                     </ItemsControl>
@@ -495,9 +500,10 @@
                                     <ItemsControl x:Name="AntonymsList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -520,9 +526,10 @@
                                     <ItemsControl x:Name="HypernymsList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -545,9 +552,10 @@
                                     <ItemsControl x:Name="HyponymsList" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           Foreground="{StaticResource Brush.TextPrimary}"
-                                                           Padding="0,2"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+                                                           <TextBlock Text="{Binding Word}" Foreground="{StaticResource Brush.TextPrimary}"/>
+                                                           <TextBlock Text="{Binding SyllableLabel}" Opacity="0.4" Margin="4,0,0,0"/>
+                                                           </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
