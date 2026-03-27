@@ -7,6 +7,7 @@ namespace Notari.Dialogs;
 public partial class SettingsDialog : Window
 {
     private readonly Dictionary<RadioButton, string> _accentMap;
+    private readonly AppSettings _original;
 
     public AppSettings Result { get; private set; }
 
@@ -15,6 +16,7 @@ public partial class SettingsDialog : Window
         InitializeComponent();
         Owner = owner;
         Result = current;
+        _original = current;
 
         _accentMap = new()
         {
@@ -72,6 +74,42 @@ public partial class SettingsDialog : Window
     {
         base.OnSourceInitialized(e);
         NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
+    }
+
+    private void OnTitleBarClose(object sender, RoutedEventArgs e)
+    {
+        if (!HasChanges()) { OnCancel(sender, e); return; }
+
+        var dlg = new UnsavedSettingsDialog(this);
+        dlg.ShowDialog();
+        if (dlg.Save)
+            OnOk(sender, e);
+        else if (dlg.Discard)
+            OnCancel(sender, e);
+        // Cancel: do nothing, stay in settings
+    }
+
+    private bool HasChanges()
+    {
+        var accent = _accentMap.FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? "#FF4FC3F7";
+        var resultLimit    = ResultLimitBox.SelectedItem    is ComboBoxItem rli ? int.Parse((string)rli.Tag) : 0;
+        var debounceMs     = DebounceBox.SelectedItem       is ComboBoxItem dbi ? int.Parse((string)dbi.Tag) : 250;
+        var autoSaveInt    = AutoSaveIntervalBox.SelectedItem is ComboBoxItem asi ? int.Parse((string)asi.Tag) : 300;
+
+        return !accent.Equals(_original.AccentColor, StringComparison.OrdinalIgnoreCase)
+            || DimBracketsCheck.IsChecked  != _original.DimBrackets
+            || DimSquareCheck.IsChecked    != _original.DimSquare
+            || DimRoundCheck.IsChecked     != _original.DimRound
+            || DimCurlyCheck.IsChecked     != _original.DimCurly
+            || TypewriterModeCheck.IsChecked != _original.TypewriterMode
+            || ShowNotesCheck.IsChecked    != _original.ShowNotes
+            || ShowPhoneticCheck.IsChecked != _original.ShowPhoneticSection
+            || ShowSemanticCheck.IsChecked != _original.ShowSemanticSection
+            || SortByZipfCheck.IsChecked   != _original.SortByZipf
+            || resultLimit                 != _original.ResultLimit
+            || debounceMs                  != _original.LookupDebounceMs
+            || AutoSaveCheck.IsChecked     != _original.AutoSave
+            || autoSaveInt                 != _original.AutoSaveIntervalSeconds;
     }
 
     private void OnOk(object sender, RoutedEventArgs e)

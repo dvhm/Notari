@@ -74,7 +74,7 @@
 
         <!-- Content -->
         <StackPanel Grid.Row="1" Margin="24">
-            <TextBlock Text="Notari v1.1.0"/>
+            <TextBlock Text="Notari v1.1.1"/>
             <TextBlock Text="A minimal open-source songwriting tool"
                        Foreground="{StaticResource Brush.TextSecondary}"
                        FontSize="{StaticResource FontSize.XSmall}"/>

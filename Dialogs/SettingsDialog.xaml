@@ -67,7 +67,7 @@
                        IsHitTestVisible="False"/>
                     <Button Style="{StaticResource Style.CaptionButton.Close}"
                     HorizontalAlignment="Right"
-                    Click="OnCancel">
+                    Click="OnTitleBarClose">
                         <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
                     </Button>
                 </Grid>
