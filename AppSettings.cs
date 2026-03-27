@@ -15,6 +15,17 @@ public sealed class AppSettings
     public bool   DimRound       { get; set; } = true;
     public bool   DimCurly       { get; set; } = false;
 
+    public bool SortByZipf             { get; set; } = false;
+    public int  ResultLimit             { get; set; } = 0;
+    public bool SpellCheck              { get; set; } = true;
+    public bool AutoSave                { get; set; } = false;
+    public int  AutoSaveIntervalSeconds { get; set; } = 300;
+    public bool ShowNotes               { get; set; } = true;
+    public bool ShowPhoneticSection     { get; set; } = true;
+    public bool ShowSemanticSection     { get; set; } = true;
+    public int  LookupDebounceMs        { get; set; } = 250;
+    public bool TypewriterMode          { get; set; } = false;
+
     public static AppSettings Load()
     {
         try

@@ -12,6 +12,7 @@ namespace Notari
         private int    _lineCount = 0;
 
         private AppSettings _settings = new();
+        private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
         private readonly PhoneticDatabase _db;
         private CancellationTokenSource _lookupCts   = new();
         private CancellationTokenSource _syllableCts = new();
@@ -32,6 +33,7 @@ namespace Notari
             _syllableCts.Cancel();
             _syllableCts.Dispose();
             await _db.DisposeAsync();
+            _autoSaveTimer?.Stop();
             base.OnClosed(e);
         }
     }

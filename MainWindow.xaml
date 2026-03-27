@@ -261,7 +261,7 @@
                     <StackPanel>
 
                         <!-- NOTES -->
-                        <StackPanel Margin="12,12,12,10">
+                        <StackPanel x:Name="NotesSection" Margin="12,12,12,10">
                             <TextBlock Text="NOTES"
                                        Foreground="{StaticResource Brush.TextSecondary}"
                                        FontSize="{StaticResource FontSize.XSmall}"
@@ -272,7 +272,7 @@
                                      VerticalScrollBarVisibility="Auto"
                                      VerticalContentAlignment="Top"/>
                         </StackPanel>
-                        <Border Height="1" Background="{StaticResource Brush.Divider}"/>
+                        <Border x:Name="NotesDivider" Height="1" Background="{StaticResource Brush.Divider}"/>
 
                         <!-- WORD INFO STRIP -->
                         <Border x:Name="WordInfoStrip"
@@ -307,7 +307,7 @@
                                 Visibility="Collapsed"/>
 
                         <!-- PHONETIC SECTION -->
-                        <Expander Style="{StaticResource Style.SectionExpander}">
+                        <Expander x:Name="PhoneticSection" Style="{StaticResource Style.SectionExpander}">
                             <Expander.Header>
                                 <TextBlock Text="PHONETIC"
                                            Foreground="{StaticResource Brush.TextSecondary}"
@@ -417,10 +417,10 @@
 
                             </StackPanel>
                         </Expander>
-                        <Border Height="1" Background="{StaticResource Brush.Divider}"/>
+                        <Border x:Name="PhoneticDivider" Height="1" Background="{StaticResource Brush.Divider}"/>
 
                         <!-- SEMANTIC SECTION -->
-                        <Expander Style="{StaticResource Style.SectionExpander}">
+                        <Expander x:Name="SemanticSection" Style="{StaticResource Style.SectionExpander}">
                             <Expander.Header>
                                 <TextBlock Text="SEMANTIC"
                                            Foreground="{StaticResource Brush.TextSecondary}"

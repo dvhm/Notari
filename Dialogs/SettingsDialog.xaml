@@ -116,6 +116,81 @@
                 </CheckBox>
             </StackPanel>
 
+            <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <!-- WRITING section -->
+            <TextBlock Text="WRITING"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="SpellCheckBox" Content="Spell check" Margin="0,0,0,8"/>
+            <CheckBox x:Name="TypewriterModeCheck" Content="Typewriter mode (keep caret centered)"/>
+
+            <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <!-- SIDEBAR section -->
+            <TextBlock Text="SIDEBAR"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="ShowNotesCheck"     Content="Show notes"            Margin="0,0,0,6"/>
+            <CheckBox x:Name="ShowPhoneticCheck"  Content="Show phonetic section" Margin="0,0,0,6"/>
+            <CheckBox x:Name="ShowSemanticCheck"  Content="Show semantic section"/>
+
+            <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <!-- LOOKUP section -->
+            <TextBlock Text="LOOKUP"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="SortByZipfCheck" Content="Sort results by frequency" Margin="0,0,0,12"/>
+
+            <TextBlock Text="Result limit"
+                       FontSize="{StaticResource FontSize.Small}"
+                       Margin="0,0,0,6"/>
+            <ComboBox x:Name="ResultLimitBox" Width="160" HorizontalAlignment="Left" Margin="0,0,0,12">
+                <ComboBoxItem Tag="25"  Content="25 results"/>
+                <ComboBoxItem Tag="50"  Content="50 results"/>
+                <ComboBoxItem Tag="100" Content="100 results"/>
+                <ComboBoxItem Tag="0"   Content="Unlimited"/>
+            </ComboBox>
+
+            <TextBlock Text="Lookup delay"
+                       FontSize="{StaticResource FontSize.Small}"
+                       Margin="0,0,0,6"/>
+            <ComboBox x:Name="DebounceBox" Width="160" HorizontalAlignment="Left">
+                <ComboBoxItem Tag="100" Content="Fast (100ms)"/>
+                <ComboBoxItem Tag="250" Content="Normal (250ms)"/>
+                <ComboBoxItem Tag="500" Content="Slow (500ms)"/>
+            </ComboBox>
+
+            <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+
+            <!-- AUTOSAVE section -->
+            <TextBlock Text="AUTOSAVE"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="{StaticResource FontSize.XSmall}"
+                       Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="AutoSaveCheck" Content="Enable autosave" Margin="0,0,0,12"/>
+
+            <StackPanel x:Name="AutoSaveIntervalPanel" Margin="16,0,0,0"
+                        IsEnabled="{Binding IsChecked, ElementName=AutoSaveCheck}">
+                <TextBlock Text="Save interval"
+                           FontSize="{StaticResource FontSize.Small}"
+                           Margin="0,0,0,6"/>
+                <ComboBox x:Name="AutoSaveIntervalBox" Width="160" HorizontalAlignment="Left">
+                    <ComboBoxItem Tag="60"  Content="1 minute"/>
+                    <ComboBoxItem Tag="120" Content="2 minutes"/>
+                    <ComboBoxItem Tag="300" Content="5 minutes"/>
+                    <ComboBoxItem Tag="600" Content="10 minutes"/>
+                </ComboBox>
+            </StackPanel>
+
             <!-- Buttons -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                 <Button x:Name="BtnCancel" Content="Cancel" Width="90" Margin="0,0,8,0" Click="OnCancel"/>

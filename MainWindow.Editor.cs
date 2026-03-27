@@ -17,6 +17,7 @@ namespace Notari
             _adorner?.SetHighlights([]);
             _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();
+            ScrollToTypewriterPosition();
         }
 
         private void UpdateDocumentStats()
@@ -109,6 +110,32 @@ namespace Notari
 
             _adorner?.SetDimRanges([]);
             UpdateSyllableCounts();
+
+            // Spell check
+            Editor.SpellCheck.IsEnabled = s.SpellCheck;
+
+            // Sidebar section visibility
+            NotesSection.Visibility    = s.ShowNotes           ? Visibility.Visible : Visibility.Collapsed;
+            NotesDivider.Visibility    = s.ShowNotes           ? Visibility.Visible : Visibility.Collapsed;
+            PhoneticSection.Visibility = s.ShowPhoneticSection ? Visibility.Visible : Visibility.Collapsed;
+            PhoneticDivider.Visibility = s.ShowPhoneticSection ? Visibility.Visible : Visibility.Collapsed;
+            SemanticSection.Visibility = s.ShowSemanticSection ? Visibility.Visible : Visibility.Collapsed;
+
+            // Autosave timer
+            _autoSaveTimer?.Stop();
+            if (s.AutoSave)
+            {
+                _autoSaveTimer = new System.Windows.Threading.DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(s.AutoSaveIntervalSeconds)
+                };
+                _autoSaveTimer.Tick += (_, _) =>
+                {
+                    if (_isDirty && !string.IsNullOrEmpty(_filePath))
+                        SaveFile(_filePath);
+                };
+                _autoSaveTimer.Start();
+            }
 
             string word = GetActiveWord();
             if (!string.IsNullOrEmpty(word) && HighlightToggle.IsChecked == true)
@@ -248,7 +275,7 @@ namespace Notari
 
             try
             {
-                await Task.Delay(250, ct);
+                await Task.Delay(_settings.LookupDebounceMs, ct);
 
                 string word = GetActiveWord();
 
@@ -264,20 +291,22 @@ namespace Notari
                 _adorner?.SetHighlights(
                     HighlightToggle.IsChecked == true ? FindWordRects(word) : []);
 
+                bool sortByZipf = _settings.SortByZipf;
+                int limit = _settings.ResultLimit == 0 ? int.MaxValue : _settings.ResultLimit;
                 var result = await Task.Run(() =>
                 {
                     var phonetics    = _db.GetPhonetics(word);
-                    var rhymes       = _db.GetRhymes(word).Select(r => r.Text).ToList();
-                    var multi        = _db.GetMultisyllabicRhymes(word).Select(r => r.Text).ToList();
-                    var assonance    = _db.GetAssonance(word).Select(r => r.Text).ToList();
-                    var alliteration = _db.GetAlliteration(word).Select(r => r.Text).ToList();
+                    var rhymes       = _db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var multi        = _db.GetMultisyllabicRhymes(word, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var assonance    = _db.GetAssonance(word, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var alliteration = _db.GetAlliteration(word, limit, sortByZipf).Select(r => r.Text).ToList();
                     var synGroups    = _posCodes
-                        .Select(p => new SynGroup(p.Pos, _db.GetSynonyms(word, pos: p.Code).Select(r => r.Text).ToList()))
+                        .Select(p => new SynGroup(p.Pos, _db.GetSynonyms(word, pos: p.Code, limit: limit, sortByZipf: sortByZipf).Select(r => r.Text).ToList()))
                         .Where(g => g.Words.Count > 0)
                         .ToList();
-                    var antonyms  = _db.GetAntonyms(word).Select(r => r.Text).ToList();
-                    var hypernyms = _db.GetHypernyms(word).Select(r => r.Text).ToList();
-                    var hyponyms  = _db.GetHyponyms(word).Select(r => r.Text).ToList();
+                    var antonyms  = _db.GetAntonyms(word, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var hypernyms = _db.GetHypernyms(word, null, limit, sortByZipf).Select(r => r.Text).ToList();
+                    var hyponyms  = _db.GetHyponyms(word, null, limit, sortByZipf).Select(r => r.Text).ToList();
                     return (phonetics, rhymes, multi, assonance, alliteration, synGroups, antonyms, hypernyms, hyponyms);
                 }, ct);
 
@@ -313,6 +342,8 @@ namespace Notari
                 SetWordGroup(AntonymsExpander,  AntonymsList,  AntonymsCount,  result.antonyms);
                 SetWordGroup(HypernymsExpander, HypernymsList, HypernymsCount, result.hypernyms);
                 SetWordGroup(HyponymsExpander,  HyponymsList,  HyponymsCount,  result.hyponyms);
+
+                ScrollToTypewriterPosition();
             }
             catch (OperationCanceledException) { }
         }
@@ -357,9 +388,17 @@ namespace Notari
             HyponymsExpander.Visibility  = Visibility.Collapsed;
         }
 
-        private string GetActiveWord()
+        private void ScrollToTypewriterPosition()
         {
-            TextSelection selection = Editor.Selection;
+            if (!_settings.TypewriterMode) return;
+            var caretRect = Editor.CaretPosition?.GetCharacterRect(LogicalDirection.Forward) ?? Rect.Empty;
+            if (caretRect.IsEmpty) return;
+            var transform = Editor.TransformToAncestor(EditorCanvas);
+            var caretCenter = transform.Transform(new Point(0, caretRect.Top + caretRect.Height / 2));
+            EditorCanvas.ScrollToVerticalOffset(caretCenter.Y - EditorCanvas.ViewportHeight / 2);
+        }
+
+        private string GetActiveWord(){            TextSelection selection = Editor.Selection;
 
             if (!selection.IsEmpty)
             {
