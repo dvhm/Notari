@@ -23,7 +23,18 @@ namespace Notari
             _settings = AppSettings.Load();
             _db = new PhoneticDatabase();
             InitializeComponent();
-            Loaded += (_, _) => { InitAdorner(); ApplySettings(_settings, save: false); };
+            Loaded += (_, _) =>
+            {
+                InitAdorner();
+                ApplySettings(_settings, save: false);
+                if (true) // if (!_settings.HasShownStartMessage)
+                {
+                    _settings.HasShownStartMessage = true;
+                    _settings.Save();
+                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+                        () => new Dialogs.StarMessageDialog(this).ShowDialog());
+                }
+            };
         }
 
         protected override async void OnClosed(EventArgs e)

@@ -9,7 +9,8 @@ public sealed class AppSettings
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Notari", "settings.json");
 
-    public string AccentColor    { get; set; } = "#FF4FC3F7";
+    public string AccentColor          { get; set; } = "#FF4FC3F7";
+    public bool   HasShownStartMessage { get; set; } = false;
     public bool   DimBrackets    { get; set; } = true;
     public bool   DimSquare      { get; set; } = true;
     public bool   DimRound       { get; set; } = true;
