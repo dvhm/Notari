@@ -55,19 +55,11 @@ public partial class SettingsDialog : Window
 
         SortByZipfCheck.IsChecked = current.SortByZipf;
 
-        foreach (ComboBoxItem item in ResultLimitBox.Items)
-            if (int.Parse((string)item.Tag) == current.ResultLimit) { ResultLimitBox.SelectedItem = item; break; }
-        if (ResultLimitBox.SelectedItem is null) ResultLimitBox.SelectedIndex = 3;
-
-        foreach (ComboBoxItem item in DebounceBox.Items)
-            if (int.Parse((string)item.Tag) == current.LookupDebounceMs) { DebounceBox.SelectedItem = item; break; }
-        if (DebounceBox.SelectedItem is null) DebounceBox.SelectedIndex = 1;
+        SelectByTag(ResultLimitBox,      current.ResultLimit,             fallbackIndex: 3);
+        SelectByTag(DebounceBox,          current.LookupDebounceMs,        fallbackIndex: 1);
 
         AutoSaveCheck.IsChecked = current.AutoSave;
-
-        foreach (ComboBoxItem item in AutoSaveIntervalBox.Items)
-            if (int.Parse((string)item.Tag) == current.AutoSaveIntervalSeconds) { AutoSaveIntervalBox.SelectedItem = item; break; }
-        if (AutoSaveIntervalBox.SelectedItem is null) AutoSaveIntervalBox.SelectedIndex = 2;
+        SelectByTag(AutoSaveIntervalBox,  current.AutoSaveIntervalSeconds, fallbackIndex: 2);
 
         ShowDebugLabelsCheck.IsChecked = current.ShowDebugLabels;
     }
@@ -75,7 +67,18 @@ public partial class SettingsDialog : Window
     private static string GetSwatchHex(string colorKey) =>
         ((System.Windows.Media.Color)System.Windows.Application.Current.Resources[colorKey]).ToString();
 
-    protected override void OnSourceInitialized(EventArgs e)    {
+    private static void SelectByTag(ComboBox box, int value, int fallbackIndex)
+    {
+        foreach (ComboBoxItem item in box.Items)
+            if (item.Tag is string s && int.TryParse(s, out int v) && v == value)
+            { box.SelectedItem = item; return; }
+        box.SelectedIndex = fallbackIndex;
+    }
+
+    private static int GetTag(ComboBox box, int fallback) =>
+        box.SelectedItem is ComboBoxItem item && int.TryParse(item.Tag as string, out int v) ? v : fallback;
+
+    protected override void OnSourceInitialized(EventArgs e){
         base.OnSourceInitialized(e);
         NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
     }
@@ -95,10 +98,10 @@ public partial class SettingsDialog : Window
 
     private bool HasChanges()
     {
-        var accent = _accentMap.FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? "#FF4FC3F7";
-        var resultLimit    = ResultLimitBox.SelectedItem    is ComboBoxItem rli ? int.Parse((string)rli.Tag) : 0;
-        var debounceMs     = DebounceBox.SelectedItem       is ComboBoxItem dbi ? int.Parse((string)dbi.Tag) : 250;
-        var autoSaveInt    = AutoSaveIntervalBox.SelectedItem is ComboBoxItem asi ? int.Parse((string)asi.Tag) : 300;
+        var accent       = _accentMap.FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? GetSwatchHex("Color.Swatch.Blue");
+        var resultLimit  = GetTag(ResultLimitBox,     fallback: 0);
+        var debounceMs   = GetTag(DebounceBox,         fallback: 250);
+        var autoSaveInt  = GetTag(AutoSaveIntervalBox, fallback: 300);
 
         return !accent.Equals(_original.AccentColor, StringComparison.OrdinalIgnoreCase)
             || DimBracketsCheck.IsChecked  != _original.DimBrackets
@@ -119,15 +122,10 @@ public partial class SettingsDialog : Window
 
     private void OnOk(object sender, RoutedEventArgs e)
     {
-        var selectedAccent = _accentMap
-            .FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? "#FF4FC3F7";
-
-        var resultLimit = ResultLimitBox.SelectedItem is ComboBoxItem rli
-            ? int.Parse((string)rli.Tag) : 0;
-        var debounceMs = DebounceBox.SelectedItem is ComboBoxItem dbi
-            ? int.Parse((string)dbi.Tag) : 250;
-        var autoSaveInterval = AutoSaveIntervalBox.SelectedItem is ComboBoxItem asi
-            ? int.Parse((string)asi.Tag) : 300;
+        var selectedAccent   = _accentMap.FirstOrDefault(kv => kv.Key.IsChecked == true).Value ?? GetSwatchHex("Color.Swatch.Blue");
+        var resultLimit      = GetTag(ResultLimitBox,     fallback: 0);
+        var debounceMs       = GetTag(DebounceBox,         fallback: 250);
+        var autoSaveInterval = GetTag(AutoSaveIntervalBox, fallback: 300);
 
         Result = new AppSettings
         {
