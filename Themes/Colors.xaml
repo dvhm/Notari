@@ -29,4 +29,14 @@
     <Color x:Key="Color.Border">#33FFFFFF</Color>
     <Color x:Key="Color.Divider">#1FFFFFFF</Color>
 
+    <!-- Accent swatches — single source of truth for the settings color picker -->
+    <Color x:Key="Color.Swatch.Blue">  #FF4FC3F7</Color>
+    <Color x:Key="Color.Swatch.Purple">#FFB07EFC</Color>
+    <Color x:Key="Color.Swatch.Pink">  #FFFC7EC8</Color>
+    <Color x:Key="Color.Swatch.Red">   #FFEF5350</Color>
+    <Color x:Key="Color.Swatch.Orange">#FFFFA040</Color>
+    <Color x:Key="Color.Swatch.Yellow">#FFFFC107</Color>
+    <Color x:Key="Color.Swatch.Green"> #FF4CAF50</Color>
+    <Color x:Key="Color.Swatch.Cyan">  #FF26C6DA</Color>
+
 </ResourceDictionary>

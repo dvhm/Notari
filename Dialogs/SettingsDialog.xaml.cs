@@ -20,14 +20,14 @@ public partial class SettingsDialog : Window
 
         _accentMap = new()
         {
-            { AccentBlue,   "#FF4FC3F7" },
-            { AccentPurple, "#FFB07EFC" },
-            { AccentPink,   "#FFFC7EC8" },
-            { AccentRed,    "#FFEF5350" },
-            { AccentOrange, "#FFFFA040" },
-            { AccentYellow, "#FFFFC107" },
-            { AccentGreen,  "#FF4CAF50" },
-            { AccentCyan,   "#FF26C6DA" },
+            { AccentBlue,   GetSwatchHex("Color.Swatch.Blue")   },
+            { AccentPurple, GetSwatchHex("Color.Swatch.Purple") },
+            { AccentPink,   GetSwatchHex("Color.Swatch.Pink")   },
+            { AccentRed,    GetSwatchHex("Color.Swatch.Red")    },
+            { AccentOrange, GetSwatchHex("Color.Swatch.Orange") },
+            { AccentYellow, GetSwatchHex("Color.Swatch.Yellow") },
+            { AccentGreen,  GetSwatchHex("Color.Swatch.Green")  },
+            { AccentCyan,   GetSwatchHex("Color.Swatch.Cyan")   },
         };
 
         bool found = false;
@@ -72,8 +72,10 @@ public partial class SettingsDialog : Window
         ShowDebugLabelsCheck.IsChecked = current.ShowDebugLabels;
     }
 
-    protected override void OnSourceInitialized(EventArgs e)
-    {
+    private static string GetSwatchHex(string colorKey) =>
+        ((System.Windows.Media.Color)System.Windows.Application.Current.Resources[colorKey]).ToString();
+
+    protected override void OnSourceInitialized(EventArgs e)    {
         base.OnSourceInitialized(e);
         NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
     }

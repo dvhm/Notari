@@ -32,4 +32,14 @@
     <SolidColorBrush x:Key="Brush.Border"          Color="{StaticResource Color.Border}"/>
     <SolidColorBrush x:Key="Brush.Divider"         Color="{StaticResource Color.Divider}"/>
 
+    <!-- Accent swatches -->
+    <SolidColorBrush x:Key="Brush.Swatch.Blue"   Color="{StaticResource Color.Swatch.Blue}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Purple" Color="{StaticResource Color.Swatch.Purple}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Pink"   Color="{StaticResource Color.Swatch.Pink}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Red"    Color="{StaticResource Color.Swatch.Red}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Orange" Color="{StaticResource Color.Swatch.Orange}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Yellow" Color="{StaticResource Color.Swatch.Yellow}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Green"  Color="{StaticResource Color.Swatch.Green}"/>
+    <SolidColorBrush x:Key="Brush.Swatch.Cyan"   Color="{StaticResource Color.Swatch.Cyan}"/>
+
 </ResourceDictionary>
