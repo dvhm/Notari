@@ -16,9 +16,11 @@ namespace Notari
 
             e.Handled = true;
 
-            double delta = e.Delta > 0 ? ZoomStep : -ZoomStep;
-            _zoom = Math.Clamp(_zoom + delta, ZoomMin, ZoomMax);
+            double delta   = e.Delta > 0 ? ZoomStep : -ZoomStep;
+            double newZoom = Math.Clamp(_zoom + delta, ZoomMin, ZoomMax);
+            if (newZoom == _zoom) return;
 
+            _zoom = newZoom;
             PaperScale.ScaleX = _zoom;
             PaperScale.ScaleY = _zoom;
             ZoomLabel.Text    = $"{(int)Math.Round(_zoom * 100)}%";
