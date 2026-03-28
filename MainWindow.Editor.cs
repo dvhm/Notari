@@ -94,17 +94,25 @@ namespace Notari
         }
 
         private static readonly Regex _bracketedContent = new(@"\[[^\]]*\]|\([^\)]*\)", RegexOptions.Compiled);
-        private Regex _allBrackets = new(@"\[[^\]]*\]|\([^\)]*\)|\{[^\}]*\}", RegexOptions.Compiled);
+        private Regex _allBrackets = new(@"(?!x)x", RegexOptions.Compiled);
+
+        private static readonly Dictionary<(bool, bool, bool), Regex> _bracketRegexCache = [];
 
         private static Regex BuildBracketRegex(AppSettings s)
         {
+            var key = (s.DimSquare, s.DimRound, s.DimCurly);
+            if (_bracketRegexCache.TryGetValue(key, out var cached))
+                return cached;
+
             var parts = new List<string>();
             if (s.DimSquare) parts.Add(@"\[[^\]]*\]");
             if (s.DimRound)  parts.Add(@"\([^\)]*\)");
             if (s.DimCurly)  parts.Add(@"\{[^\}]*\}");
-            return parts.Count > 0
+            var regex = parts.Count > 0
                 ? new Regex(string.Join("|", parts), RegexOptions.Compiled)
-                : new Regex(@"(?!x)x", RegexOptions.Compiled); // never matches
+                : new Regex(@"(?!x)x", RegexOptions.Compiled);
+            _bracketRegexCache[key] = regex;
+            return regex;
         }
 
         internal void ApplySettings(AppSettings s, bool save = true)
