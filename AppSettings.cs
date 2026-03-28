@@ -25,6 +25,7 @@ public sealed class AppSettings
     public bool ShowSemanticSection     { get; set; } = true;
     public int  LookupDebounceMs        { get; set; } = 250;
     public bool TypewriterMode          { get; set; } = false;
+    public bool ShowDebugLabels         { get; set; } = false;
 
     public static AppSettings Load()
     {
