@@ -12,7 +12,8 @@ namespace Notari
     {
         private void OnEditorTextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateDocumentStats();
+            _statsDebounce.Stop();
+            _statsDebounce.Start();
             SetDirty(true);
             _adorner?.SetHighlights([]);
             _adorner?.SetDimRanges([]);
@@ -23,12 +24,18 @@ namespace Notari
             ScrollToTypewriterPosition();
         }
 
+        private readonly System.Windows.Threading.DispatcherTimer _statsDebounce = new()
+        {
+            Interval = TimeSpan.FromMilliseconds(500)
+        };
+
         private void UpdateDocumentStats()
         {
             var text = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd).Text;
             _wordCount = text.Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries).Length;
             _lineCount = Editor.Document.Blocks.OfType<Paragraph>()
                 .Sum(p => 1 + FlattenInlines(p.Inlines).OfType<LineBreak>().Count());
+            UpdateTitle();
         }
 
         private void InitAdorner()

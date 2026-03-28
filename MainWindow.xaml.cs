@@ -40,6 +40,7 @@ namespace Notari
             Loaded -= OnLoaded;
             InitAdorner();
             InitFindReplace();
+            _statsDebounce.Tick += (_, _) => { _statsDebounce.Stop(); UpdateDocumentStats(); };
             ApplySettings(_settings, save: false);
             if (!_settings.HasShownStartMessage)
             {
@@ -61,6 +62,7 @@ namespace Notari
             await _db.DisposeAsync();
             _hoverTimer.Stop();
             _hoverTimer.Tick -= OnHoverTimerTick;
+            _statsDebounce.Stop();
             if (_autoSaveTimer is not null && _autoSaveTickHandler is not null)
                 _autoSaveTimer.Tick -= _autoSaveTickHandler;
             _autoSaveTimer?.Stop();
