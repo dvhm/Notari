@@ -10,6 +10,7 @@ namespace Notari;
 public partial class MainWindow
 {
     private List<(TextPointer Start, TextPointer End)> _matches = [];
+    private List<Rect?> _matchRects = [];
     private int _matchIndex = -1;
     private bool _findBarOpen = false;
     private readonly DispatcherTimer _findDebounce = new() { Interval = TimeSpan.FromMilliseconds(180) };
@@ -41,6 +42,7 @@ public partial class MainWindow
         _findDebounce.Stop();
         FindBar.Visibility = Visibility.Collapsed;
         _matches.Clear();
+        _matchRects.Clear();
         _matchIndex = -1;
         _adorner?.SetFindHighlights([], null);
         Editor.Focus();
@@ -100,12 +102,11 @@ public partial class MainWindow
     private void UpdateFindHighlights()
     {
         if (_adorner is null) return;
-        var allRects = new List<Rect>(_matches.Count);
+        var allRects = new List<Rect>(_matchRects.Count);
         Rect? activeRect = null;
-        for (int i = 0; i < _matches.Count; i++)
+        for (int i = 0; i < _matchRects.Count; i++)
         {
-            var r = GetMatchRect(_matches[i].Start, _matches[i].End);
-            if (r is Rect rect)
+            if (_matchRects[i] is Rect rect)
             {
                 allRects.Add(rect);
                 if (i == _matchIndex) activeRect = rect;
@@ -158,6 +159,8 @@ public partial class MainWindow
 
         if (_matches.Count > 0)
         {
+            // Pre-compute all rects once; reused on every FindNext/FindPrev until next refresh.
+            _matchRects = _matches.Select(m => GetMatchRect(m.Start, m.End)).ToList();
             _matchIndex = 0;
             SelectMatch(0);
         }
