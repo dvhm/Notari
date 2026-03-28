@@ -68,6 +68,8 @@ public partial class SettingsDialog : Window
         foreach (ComboBoxItem item in AutoSaveIntervalBox.Items)
             if (int.Parse((string)item.Tag) == current.AutoSaveIntervalSeconds) { AutoSaveIntervalBox.SelectedItem = item; break; }
         if (AutoSaveIntervalBox.SelectedItem is null) AutoSaveIntervalBox.SelectedIndex = 2;
+
+        ShowDebugLabelsCheck.IsChecked = current.ShowDebugLabels;
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -109,7 +111,8 @@ public partial class SettingsDialog : Window
             || resultLimit                 != _original.ResultLimit
             || debounceMs                  != _original.LookupDebounceMs
             || AutoSaveCheck.IsChecked     != _original.AutoSave
-            || autoSaveInt                 != _original.AutoSaveIntervalSeconds;
+            || autoSaveInt                 != _original.AutoSaveIntervalSeconds
+            || ShowDebugLabelsCheck.IsChecked != _original.ShowDebugLabels;
     }
 
     private void OnOk(object sender, RoutedEventArgs e)
@@ -140,6 +143,7 @@ public partial class SettingsDialog : Window
             ShowSemanticSection     = ShowSemanticCheck.IsChecked == true,
             LookupDebounceMs        = debounceMs,
             TypewriterMode          = TypewriterModeCheck.IsChecked == true,
+            ShowDebugLabels         = ShowDebugLabelsCheck.IsChecked == true,
         };
         DialogResult = true;
         Close();

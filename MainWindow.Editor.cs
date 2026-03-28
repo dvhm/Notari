@@ -137,6 +137,14 @@ namespace Notari
             PhoneticDivider.Visibility = s.ShowPhoneticSection ? Visibility.Visible : Visibility.Collapsed;
             SemanticSection.Visibility = s.ShowSemanticSection ? Visibility.Visible : Visibility.Collapsed;
 
+            // Debug labels
+            if (!s.ShowDebugLabels)
+            {
+                FocusLabel.Visibility     = Visibility.Collapsed;
+                HoverLabel.Visibility     = Visibility.Collapsed;
+                LabelSeparator.Visibility = Visibility.Collapsed;
+            }
+
             // Autosave timer
             _autoSaveTimer?.Stop();
             if (s.AutoSave)
@@ -298,7 +306,7 @@ namespace Notari
                 string word = GetActiveWord();
 
                 FocusLabel.Text       = string.IsNullOrEmpty(word) ? "" : $"Focus: \"{word}\"";
-                FocusLabel.Visibility = string.IsNullOrEmpty(word) ? Visibility.Collapsed : Visibility.Visible;
+                FocusLabel.Visibility = !string.IsNullOrEmpty(word) && _settings.ShowDebugLabels ? Visibility.Visible : Visibility.Collapsed;
                 UpdateLabelSeparator();
 
                 if (string.IsNullOrWhiteSpace(word))
@@ -551,7 +559,7 @@ namespace Notari
             }
 
             HoverLabel.Text       = $"Hover: \"{word}\"";
-            HoverLabel.Visibility = Visibility.Visible;
+            HoverLabel.Visibility = _settings.ShowDebugLabels ? Visibility.Visible : Visibility.Collapsed;
             UpdateLabelSeparator();
 
             // If the same word is already showing, leave the popup where it is.
