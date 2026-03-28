@@ -15,7 +15,7 @@ public partial class MainWindow
     private bool _findBarOpen = false;
     private readonly DispatcherTimer _findDebounce = new() { Interval = TimeSpan.FromMilliseconds(180) };
 
-    private void InitFindReplace()
+    private void InitFindReplace() 
     {
         _findDebounce.Tick += (_, _) => { _findDebounce.Stop(); RefreshMatches(); };
     }
@@ -26,7 +26,7 @@ public partial class MainWindow
     private void OpenFindBar(bool showReplace)
     {
         _findBarOpen = true;
-        _adorner?.SetHighlights([]);
+        _adornerService.SetHighlights([]);
         ReplaceRow.Visibility = showReplace ? Visibility.Visible : Visibility.Collapsed;
         FindBar.Visibility = Visibility.Visible;
         FindInput.Focus();
@@ -44,8 +44,7 @@ public partial class MainWindow
         _matches.Clear();
         _matchRects.Clear();
         _matchIndex = -1;
-        _adorner?.SetFindHighlights([], null);
-        Editor.Focus();
+        _adornerService.SetFindHighlights([], null);
     }
 
     private void OnFindTextChanged(object sender, TextChangedEventArgs e)
@@ -101,7 +100,6 @@ public partial class MainWindow
 
     private void UpdateFindHighlights()
     {
-        if (_adorner is null) return;
         var allRects = new List<Rect>(_matchRects.Count);
         Rect? activeRect = null;
         for (int i = 0; i < _matchRects.Count; i++)
@@ -112,7 +110,7 @@ public partial class MainWindow
                 if (i == _matchIndex) activeRect = rect;
             }
         }
-        _adorner.SetFindHighlights(allRects, activeRect);
+        _adornerService.SetFindHighlights(allRects, activeRect);
     }
 
     private void RefreshMatches()
@@ -121,7 +119,7 @@ public partial class MainWindow
         _matchIndex = -1;
 
         string term = FindInput.Text;
-        if (string.IsNullOrEmpty(term)) { _adorner?.SetFindHighlights([], null); UpdateMatchLabel(); return; }
+        if (string.IsNullOrEmpty(term)) { _adornerService.SetFindHighlights([], null); UpdateMatchLabel(); return; }
 
         bool matchCase  = MatchCaseCheck.IsChecked  == true;
         bool wholeWords = WholeWordCheck.IsChecked   == true;
@@ -166,8 +164,7 @@ public partial class MainWindow
         }
         else
         {
-            _adorner?.SetFindHighlights([], null);
-            UpdateMatchLabel();
+            _adornerService.SetFindHighlights([], null);
         }
     }
 
