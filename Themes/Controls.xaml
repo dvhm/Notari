@@ -624,4 +624,20 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- WordList: virtualized ItemsControl for potentially long word result lists -->
+    <Style x:Key="Style.WordList" TargetType="ItemsControl">
+        <Setter Property="MaxHeight"                              Value="360"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll"         Value="True"/>
+        <Setter Property="VirtualizingPanel.IsVirtualizing"      Value="True"/>
+        <Setter Property="VirtualizingPanel.VirtualizationMode"  Value="Recycling"/>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

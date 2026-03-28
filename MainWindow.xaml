@@ -481,7 +481,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="RhymesList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="RhymesList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -507,7 +507,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="MultisyllabicList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="MultisyllabicList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -533,7 +533,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="AssonanceList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="AssonanceList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -559,7 +559,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="AlliterationList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="AlliterationList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -598,7 +598,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="SynonymsList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="SynonymsList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Expander Style="{StaticResource Style.SynExpander}">
@@ -612,7 +612,7 @@
                                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                                         </StackPanel>
                                                     </Expander.Header>
-                                                    <ItemsControl ItemsSource="{Binding Words}" Margin="8,0,0,6">
+                                                    <ItemsControl ItemsSource="{Binding Words}" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
                                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -642,7 +642,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="AntonymsList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="AntonymsList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -668,7 +668,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="HypernymsList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="HypernymsList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
@@ -694,7 +694,7 @@
                                                        FontSize="{StaticResource FontSize.XSmall}"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl x:Name="HyponymsList" Margin="8,0,0,6">
+                                    <ItemsControl x:Name="HyponymsList" Style="{StaticResource Style.WordList}" Margin="8,0,0,6">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
