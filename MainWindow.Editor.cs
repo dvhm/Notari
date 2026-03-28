@@ -494,7 +494,9 @@ namespace Notari
             EditorCanvas.ScrollToVerticalOffset(caretCenter.Y - EditorCanvas.ViewportHeight / 2);
         }
 
-        private string GetActiveWord(){            TextSelection selection = Editor.Selection;
+        private string GetActiveWord()
+        {
+            TextSelection selection = Editor.Selection;
 
             if (!selection.IsEmpty)
             {
@@ -502,29 +504,31 @@ namespace Notari
                 return new string(raw.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
             }
 
-            TextPointer caret = selection.Start;
+            return GetWordAtPointer(selection.Start);
+        }
 
-            TextPointer start = caret;
-            while (true)
-            {
-                TextPointer prev = start.GetPositionAtOffset(-1);
-                if (prev == null) break;
-                string ch = new TextRange(prev, start).Text;
-                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
-                start = prev;
-            }
+        /// <summary>
+        /// Extracts the word surrounding <paramref name="pointer"/> by fetching the paragraph text
+        /// once and walking it as a plain string — avoids per-character TextPointer allocations.
+        /// </summary>
+        private static string GetWordAtPointer(TextPointer pointer)
+        {
+            var para = pointer.Paragraph;
+            if (para is null) return string.Empty;
 
-            TextPointer end = caret;
-            while (true)
-            {
-                TextPointer next = end.GetPositionAtOffset(1);
-                if (next == null) break;
-                string ch = new TextRange(end, next).Text;
-                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
-                end = next;
-            }
+            string paraText   = new TextRange(para.ContentStart, para.ContentEnd).Text;
+            string textBefore = new TextRange(para.ContentStart, pointer).Text;
+            int    idx        = Math.Clamp(textBefore.Length, 0, paraText.Length);
 
-            return new string(new TextRange(start, end).Text.Trim().Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+            int start = idx;
+            while (start > 0 && !char.IsWhiteSpace(paraText[start - 1]))
+                start--;
+
+            int end = idx;
+            while (end < paraText.Length && !char.IsWhiteSpace(paraText[end]))
+                end++;
+
+            return new string(paraText[start..end].Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
         }
 
         private void OnEditorMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -546,28 +550,7 @@ namespace Notari
                 return;
             }
 
-            TextPointer start = pointer;
-            while (true)
-            {
-                TextPointer prev = start.GetPositionAtOffset(-1);
-                if (prev == null) break;
-                string ch = new TextRange(prev, start).Text;
-                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
-                start = prev;
-            }
-
-            TextPointer end = pointer;
-            while (true)
-            {
-                TextPointer next = end.GetPositionAtOffset(1);
-                if (next == null) break;
-                string ch = new TextRange(end, next).Text;
-                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
-                end = next;
-            }
-
-            string word = new string(new TextRange(start, end).Text.Trim()
-                .Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+            string word = GetWordAtPointer(pointer);
 
             if (string.IsNullOrEmpty(word))
             {
