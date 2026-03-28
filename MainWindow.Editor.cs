@@ -429,12 +429,23 @@ namespace Notari
         {
             try
             {
-                foreach (var item in items)
+                const int batchSize = 20;
+                for (int i = 0; i < items.Count; i += batchSize)
                 {
-                    var syl = await Task.Run(() => _db.GetSyllableCount(item.Word), ct);
-                    if (syl.HasValue)
-                        item.SyllableLabel = $"({syl.Value})";
-                    await Task.Delay(15, ct);
+                    var batch = items.GetRange(i, Math.Min(batchSize, items.Count - i));
+
+                    // Look up the whole batch in one background operation.
+                    var results = await Task.Run(
+                        () => batch.Select(item => (item, Syl: _db.GetSyllableCount(item.Word))).ToList(),
+                        ct);
+
+                    ct.ThrowIfCancellationRequested();
+
+                    foreach (var (item, syl) in results)
+                        if (syl.HasValue) item.SyllableLabel = $"({syl.Value})";
+
+                    if (i + batchSize < items.Count)
+                        await Task.Delay(50, ct);
                 }
             }
             catch (OperationCanceledException) { }
