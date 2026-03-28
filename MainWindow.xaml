@@ -255,6 +255,12 @@
                                   Unchecked="OnRhymeSchemeToggled">
                         <ui:SymbolIcon Symbol="NumberSymbol"/>
                     </ToggleButton>
+                    <ToggleButton x:Name="HoverToggle"
+                                  Style="{StaticResource Style.ToolbarToggleButton}"
+                                  ToolTip="Show word info on hover"
+                                  Margin="2,0,0,0">
+                        <ui:SymbolIcon Symbol="BookQuestionMark"/>
+                    </ToggleButton>
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -709,9 +715,39 @@
 
         </Grid>
 
+        <!-- Word hover popup -->
+        <Popup x:Name="HoverPopup"
+               Placement="Mouse"
+               HorizontalOffset="12"
+               VerticalOffset="16"
+               AllowsTransparency="True"
+               StaysOpen="True"
+               IsOpen="False">
+            <Border Background="{StaticResource Brush.SurfaceElevated}"
+                    BorderBrush="{StaticResource Brush.Border}"
+                    BorderThickness="{StaticResource Thickness.Hairline}"
+                    CornerRadius="{StaticResource Radius.Large}"
+                    Padding="12,8">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.5" Color="#000000" Direction="270"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock x:Name="PopupWordLabel"
+                               Foreground="{StaticResource Brush.TextPrimary}"
+                               FontSize="{StaticResource FontSize.Medium}"
+                               FontWeight="{StaticResource FontWeight.SemiBold}"
+                               Margin="0,0,0,3"/>
+                    <TextBlock x:Name="PopupMetaLabel"
+                               Foreground="{StaticResource Brush.TextSecondary}"
+                               FontFamily="{StaticResource Font.Mono}"
+                               FontSize="{StaticResource FontSize.XSmall}"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+        </Popup>
+
         <Border Grid.Row="3"
                 Background="{StaticResource Brush.Surface}"
-                BorderBrush="{StaticResource Brush.Divider}"
                 BorderThickness="0,1,0,0"
                 Padding="12,4">
             <DockPanel>

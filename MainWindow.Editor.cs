@@ -504,6 +504,7 @@ namespace Notari
 
         private void OnEditorMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (HoverToggle.IsChecked != true) return;
             _hoverPoint = e.GetPosition(Editor);
             _hoverTimer.Stop();
             _hoverTimer.Start();
@@ -552,6 +553,32 @@ namespace Notari
             HoverLabel.Text       = $"Hover: \"{word}\"";
             HoverLabel.Visibility = Visibility.Visible;
             UpdateLabelSeparator();
+
+            // If the same word is already showing, leave the popup where it is.
+            if (word == _hoverWord && HoverPopup.IsOpen) return;
+
+            _hoverWord = word;
+
+            // Word changed — reposition by closing and reopening (Placement="Mouse" snaps on open).
+            HoverPopup.IsOpen = false;
+
+            // Populate and show the popup
+            var phonetics = _db.GetPhonetics(word);
+            var primary   = phonetics.FirstOrDefault();
+
+            PopupWordLabel.Text = word;
+            if (primary is not null)
+            {
+                string stress = string.Join("-", primary.StressPattern.AsEnumerable());
+                PopupMetaLabel.Text       = $"{primary.SyllableCount} syl  ·  {stress}  ·  {primary.Arpa}";
+                PopupMetaLabel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PopupMetaLabel.Visibility = Visibility.Collapsed;
+            }
+
+            HoverPopup.IsOpen = true;
         }
 
         private void OnEditorMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
@@ -562,8 +589,10 @@ namespace Notari
 
         private void ClearHoverLabel()
         {
-            HoverLabel.Visibility    = Visibility.Collapsed;
+            HoverLabel.Visibility     = Visibility.Collapsed;
             LabelSeparator.Visibility = Visibility.Collapsed;
+            HoverPopup.IsOpen         = false;
+            _hoverWord                = string.Empty;
         }
 
         private void UpdateLabelSeparator()

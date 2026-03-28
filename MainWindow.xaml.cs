@@ -15,6 +15,7 @@ namespace Notari
         private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
         private readonly System.Windows.Threading.DispatcherTimer _hoverTimer;
         private System.Windows.Point _hoverPoint;
+        private string _hoverWord = string.Empty;
         private readonly PhoneticDatabase _db;
         private CancellationTokenSource _lookupCts   = new();
         private CancellationTokenSource _syllableCts = new();
