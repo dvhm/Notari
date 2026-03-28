@@ -46,7 +46,11 @@ namespace Notari
         private IReadOnlyList<Rect>                       _dimRects       = [];
         private IReadOnlyList<Rect>                       _findMatches    = [];
         private Rect?                                     _findActive     = null;
-        private IReadOnlyList<(double Y, double X, string Label)> _rhymeLabels    = [];
+        private IReadOnlyList<(double Y, double X, string Label)> _rhymeLabels = [];
+
+        // Pre-built FormattedText caches — rebuilt when data changes, reused on every OnRender.
+        private IReadOnlyList<(double Y, FormattedText Text)>            _gutterFormatted = [];
+        private IReadOnlyList<(double Y, double X, FormattedText Text, Brush Fg, Brush Bg)> _rhymeFormatted  = [];
 
         static EditorAdorner()
         {
@@ -76,10 +80,18 @@ namespace Notari
             _findActiveMatchBrush = (Brush)res["Brush.FindMatchActive"];
         }
 
-        /// <summary>Sets the per-paragraph syllable counts and schedules a redraw.</summary>
+        /// <summary>Sets per-paragraph syllable counts and schedules a redraw.</summary>
         public void SetGutterEntries(IReadOnlyList<(double Y, int Syllables)> entries)
         {
             _gutterEntries = entries;
+            double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            _gutterFormatted = entries
+                .Select(e => (e.Y, new FormattedText(
+                    e.Syllables.ToString(),
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    _typeface, _fontSize, _brush, dpi)))
+                .ToList();
             InvalidateVisual();
         }
 
@@ -103,10 +115,25 @@ namespace Notari
             InvalidateVisual();
         }
 
-        /// <summary>Sets inline rhyme-scheme labels (e.g. "(A)", "(B)"). Pass an empty list to clear.</summary>
+        /// <summary>Sets inline rhyme-scheme labels (e.g. "A", "B"). Pass an empty list to clear.</summary>
         public void SetRhymeLabels(IReadOnlyList<(double Y, double X, string Label)> labels)
         {
             _rhymeLabels = labels;
+            double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            _rhymeFormatted = labels
+                .Select(e =>
+                {
+                    int   idx = (e.Label.Length > 0 ? e.Label[0] - 'A' : 0) % RhymeColors.Length;
+                    Brush fg  = _rhymeFgBrushes[idx];
+                    Brush bg  = _rhymeBgBrushes[idx];
+                    var   ft  = new FormattedText(
+                        e.Label,
+                        CultureInfo.InvariantCulture,
+                        FlowDirection.LeftToRight,
+                        _typeface, _fontSize, fg, dpi);
+                    return (e.Y, e.X, ft, fg, bg);
+                })
+                .ToList();
             InvalidateVisual();
         }
 
@@ -118,10 +145,20 @@ namespace Notari
             InvalidateVisual();
         }
 
+        /// <summary>Clears all overlays in one pass with a single redraw.</summary>
+        public void ClearOverlays()
+        {
+            _highlights     = [];
+            _dimRects       = [];
+            _rhymeLabels    = [];
+            _rhymeFormatted = [];
+            _gutterEntries  = [];
+            _gutterFormatted = [];
+            InvalidateVisual();
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
-            double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-
             foreach (var rect in _dimRects)
                 dc.DrawRectangle(_dimBrush, null, rect);
 
@@ -134,40 +171,14 @@ namespace Notari
             if (_findActive is Rect active)
                 dc.DrawRoundedRectangle(_findActiveMatchBrush, null, active, 2, 2);
 
-            foreach (var (y, syl) in _gutterEntries)
-            {
-                var text = new FormattedText(
-                    syl.ToString(),
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    _typeface,
-                    _fontSize,
-                    _brush,
-                    dpi);
-
-                // Right-align the number within the gutter area.
+            foreach (var (y, text) in _gutterFormatted)
                 dc.DrawText(text, new Point(GutterRightX - text.Width, y));
-            }
 
-            foreach (var (y, x, label) in _rhymeLabels)
+            foreach (var (y, x, text, _, bg) in _rhymeFormatted)
             {
-                int   idx = (label.Length > 0 ? label[0] - 'A' : 0) % RhymeColors.Length;
-                Brush fg  = _rhymeFgBrushes[idx];
-                Brush bg  = _rhymeBgBrushes[idx];
-
-                var text = new FormattedText(
-                    label,
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    _typeface,
-                    _fontSize,
-                    fg,
-                    dpi);
-
                 const double padX = 5, padY = 1, offsetY = 4;
                 double bx = x + 9;
                 var badgeRect = new Rect(bx - padX, y - padY + offsetY, text.Width + padX * 2, text.Height + padY * 2);
-
                 dc.DrawRoundedRectangle(bg, null, badgeRect, 3, 3);
                 dc.DrawText(text, new Point(bx, y + offsetY));
             }

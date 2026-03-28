@@ -15,10 +15,7 @@ namespace Notari
             _statsDebounce.Stop();
             _statsDebounce.Start();
             SetDirty(true);
-            _adorner?.SetHighlights([]);
-            _adorner?.SetDimRanges([]);
-            _adorner?.SetRhymeLabels([]);
-            _adorner?.SetGutterEntries([]);
+            _adorner?.ClearOverlays();
             UpdateSyllableCounts();
             UpdateRhymeScheme();
             ScrollToTypewriterPosition();
