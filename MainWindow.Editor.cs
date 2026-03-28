@@ -299,6 +299,7 @@ namespace Notari
 
                 FocusLabel.Text       = string.IsNullOrEmpty(word) ? "" : $"Focus: \"{word}\"";
                 FocusLabel.Visibility = string.IsNullOrEmpty(word) ? Visibility.Collapsed : Visibility.Visible;
+                UpdateLabelSeparator();
 
                 if (string.IsNullOrWhiteSpace(word))
                 {
@@ -440,6 +441,7 @@ namespace Notari
         private void ClearSidebar()
         {
             FocusLabel.Visibility    = Visibility.Collapsed;
+            UpdateLabelSeparator();
             LookupSpinner.Visibility = Visibility.Collapsed;
             _adorner?.SetHighlights([]);
 
@@ -498,6 +500,78 @@ namespace Notari
             }
 
             return new string(new TextRange(start, end).Text.Trim().Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+        }
+
+        private void OnEditorMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _hoverPoint = e.GetPosition(Editor);
+            _hoverTimer.Stop();
+            _hoverTimer.Start();
+        }
+
+        private void OnHoverTimerTick(object? sender, EventArgs e)
+        {
+            _hoverTimer.Stop();
+
+            var pointer = Editor.GetPositionFromPoint(_hoverPoint, snapToText: false);
+            if (pointer == null)
+            {
+                ClearHoverLabel();
+                return;
+            }
+
+            TextPointer start = pointer;
+            while (true)
+            {
+                TextPointer prev = start.GetPositionAtOffset(-1);
+                if (prev == null) break;
+                string ch = new TextRange(prev, start).Text;
+                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
+                start = prev;
+            }
+
+            TextPointer end = pointer;
+            while (true)
+            {
+                TextPointer next = end.GetPositionAtOffset(1);
+                if (next == null) break;
+                string ch = new TextRange(end, next).Text;
+                if (ch.Length == 0 || char.IsWhiteSpace(ch[0])) break;
+                end = next;
+            }
+
+            string word = new string(new TextRange(start, end).Text.Trim()
+                .Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+
+            if (string.IsNullOrEmpty(word))
+            {
+                ClearHoverLabel();
+                return;
+            }
+
+            HoverLabel.Text       = $"Hover: \"{word}\"";
+            HoverLabel.Visibility = Visibility.Visible;
+            UpdateLabelSeparator();
+        }
+
+        private void OnEditorMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _hoverTimer.Stop();
+            ClearHoverLabel();
+        }
+
+        private void ClearHoverLabel()
+        {
+            HoverLabel.Visibility    = Visibility.Collapsed;
+            LabelSeparator.Visibility = Visibility.Collapsed;
+        }
+
+        private void UpdateLabelSeparator()
+        {
+            LabelSeparator.Visibility = HoverLabel.Visibility == Visibility.Visible
+                                     && FocusLabel.Visibility == Visibility.Visible
+                                        ? Visibility.Visible
+                                        : Visibility.Collapsed;
         }
     }
 }

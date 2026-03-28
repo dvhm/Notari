@@ -13,6 +13,8 @@ namespace Notari
 
         private AppSettings _settings = new();
         private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
+        private readonly System.Windows.Threading.DispatcherTimer _hoverTimer;
+        private System.Windows.Point _hoverPoint;
         private readonly PhoneticDatabase _db;
         private CancellationTokenSource _lookupCts   = new();
         private CancellationTokenSource _syllableCts = new();
@@ -22,6 +24,11 @@ namespace Notari
         {
             _settings = AppSettings.Load();
             _db = new PhoneticDatabase();
+            _hoverTimer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(100)
+            };
+            _hoverTimer.Tick += OnHoverTimerTick;
             InitializeComponent();
             Loaded += (_, _) =>
             {

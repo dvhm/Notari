@@ -55,15 +55,26 @@
                            Foreground="{StaticResource Brush.TextSecondary}"
                            FontSize="{StaticResource FontSize.Small}"
                            IsHitTestVisible="False"/>
-                <!-- Focus word — right-aligned, shown when caret is on a word -->
-                <TextBlock x:Name="FocusLabel"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Foreground="{StaticResource Brush.TextSecondary}"
-                           FontSize="{StaticResource FontSize.XSmall}"
-                           Margin="0,0,150,0"
-                           Visibility="Collapsed"
-                           IsHitTestVisible="False"/>
+                <!-- Focus / Hover words — right-aligned, shown when caret/cursor is on a word -->
+                <StackPanel HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Margin="0,0,150,0"
+                            IsHitTestVisible="False">
+                    <TextBlock x:Name="HoverLabel"
+                               Foreground="{StaticResource Brush.TextSecondary}"
+                               FontSize="{StaticResource FontSize.XSmall}"
+                               Visibility="Collapsed"/>
+                    <TextBlock Text=" · "
+                               Foreground="{StaticResource Brush.TextDisabled}"
+                               FontSize="{StaticResource FontSize.XSmall}"
+                               x:Name="LabelSeparator"
+                               Visibility="Collapsed"/>
+                    <TextBlock x:Name="FocusLabel"
+                               Foreground="{StaticResource Brush.TextSecondary}"
+                               FontSize="{StaticResource FontSize.XSmall}"
+                               Visibility="Collapsed"/>
+                </StackPanel>
                 <Menu Background="Transparent"
                       HorizontalAlignment="Left"
                       Foreground="{StaticResource Brush.TextPrimary}"
@@ -284,7 +295,9 @@
                              VerticalScrollBarVisibility="Disabled"
                              HorizontalScrollBarVisibility="Disabled"
                              SelectionChanged="OnEditorSelectionChanged"
-                             TextChanged="OnEditorTextChanged"/>
+                             TextChanged="OnEditorTextChanged"
+                             MouseMove="OnEditorMouseMove"
+                             MouseLeave="OnEditorMouseLeave"/>
             </Border>
         </ScrollViewer>
 
