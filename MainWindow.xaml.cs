@@ -13,6 +13,7 @@ namespace Notari
 
         private AppSettings _settings = new();
         private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
+        private EventHandler? _autoSaveTickHandler;
         private readonly System.Windows.Threading.DispatcherTimer _hoverTimer;
         private System.Windows.Point _hoverPoint;
         private string _hoverWord = string.Empty;
@@ -31,19 +32,22 @@ namespace Notari
             };
             _hoverTimer.Tick += OnHoverTimerTick;
             InitializeComponent();
-            Loaded += (_, _) =>
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnLoaded;
+            InitAdorner();
+            InitFindReplace();
+            ApplySettings(_settings, save: false);
+            if (!_settings.HasShownStartMessage)
             {
-                InitAdorner();
-                InitFindReplace();
-                ApplySettings(_settings, save: false);
-                if (!_settings.HasShownStartMessage)
-                {
-                    _settings.HasShownStartMessage = true;
-                    _settings.Save();
-                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-                        () => new Dialogs.StarMessageDialog(this).ShowDialog());
-                }
-            };
+                _settings.HasShownStartMessage = true;
+                _settings.Save();
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+                    () => new Dialogs.StarMessageDialog(this).ShowDialog());
+            }
         }
 
         protected override async void OnClosed(EventArgs e)
@@ -55,6 +59,10 @@ namespace Notari
             _rhymeSchemeCts.Cancel();
             _rhymeSchemeCts.Dispose();
             await _db.DisposeAsync();
+            _hoverTimer.Stop();
+            _hoverTimer.Tick -= OnHoverTimerTick;
+            if (_autoSaveTimer is not null && _autoSaveTickHandler is not null)
+                _autoSaveTimer.Tick -= _autoSaveTickHandler;
             _autoSaveTimer?.Stop();
             base.OnClosed(e);
         }

@@ -147,6 +147,8 @@ namespace Notari
             }
 
             // Autosave timer
+            if (_autoSaveTimer is not null && _autoSaveTickHandler is not null)
+                _autoSaveTimer.Tick -= _autoSaveTickHandler;
             _autoSaveTimer?.Stop();
             if (s.AutoSave)
             {
@@ -154,11 +156,12 @@ namespace Notari
                 {
                     Interval = TimeSpan.FromSeconds(s.AutoSaveIntervalSeconds)
                 };
-                _autoSaveTimer.Tick += (_, _) =>
+                _autoSaveTickHandler = (_, _) =>
                 {
                     if (_isDirty && !string.IsNullOrEmpty(_filePath))
                         SaveFile(_filePath);
                 };
+                _autoSaveTimer.Tick += _autoSaveTickHandler;
                 _autoSaveTimer.Start();
             }
 
