@@ -539,7 +539,7 @@ namespace Notari
             _hoverTimer.Start();
         }
 
-        private void OnHoverTimerTick(object? sender, EventArgs e)
+        private async void OnHoverTimerTick(object? sender, EventArgs e)
         {
             _hoverTimer.Stop();
 
@@ -567,26 +567,36 @@ namespace Notari
 
             _hoverWord = word;
 
+            // Cancel any in-flight hover lookup, then start a new one.
+            _hoverCts.Cancel();
+            _hoverCts.Dispose();
+            _hoverCts = new CancellationTokenSource();
+            var ct = _hoverCts.Token;
+
             // Word changed — reposition by closing and reopening (Placement="Mouse" snaps on open).
             HoverPopup.IsOpen = false;
 
-            // Populate and show the popup
-            var phonetics = _db.GetPhonetics(word);
-            var primary   = phonetics.FirstOrDefault();
-
-            PopupWordLabel.Text = word;
-            if (primary is not null)
+            try
             {
-                string stress = string.Join("-", primary.StressPattern.AsEnumerable());
-                PopupMetaLabel.Text       = $"{primary.SyllableCount} syl  ·  {stress}  ·  {primary.Arpa}";
-                PopupMetaLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                PopupMetaLabel.Visibility = Visibility.Collapsed;
-            }
+                var phonetics = await Task.Run(() => _db.GetPhonetics(word), ct);
+                ct.ThrowIfCancellationRequested();
+                var primary = phonetics.FirstOrDefault();
 
-            HoverPopup.IsOpen = true;
+                PopupWordLabel.Text = word;
+                if (primary is not null)
+                {
+                    string stress = string.Join("-", primary.StressPattern.AsEnumerable());
+                    PopupMetaLabel.Text       = $"{primary.SyllableCount} syl  ·  {stress}  ·  {primary.Arpa}";
+                    PopupMetaLabel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PopupMetaLabel.Visibility = Visibility.Collapsed;
+                }
+
+                HoverPopup.IsOpen = true;
+            }
+            catch (OperationCanceledException) { }
         }
 
         private void OnEditorMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

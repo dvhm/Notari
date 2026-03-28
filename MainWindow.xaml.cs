@@ -20,6 +20,7 @@ namespace Notari
         private readonly PhoneticDatabase _db;
         private CancellationTokenSource _lookupCts   = new();
         private CancellationTokenSource _syllableCts = new();
+        private CancellationTokenSource _hoverCts    = new();
         private EditorAdorner _adorner = null!;
 
         public MainWindow()
@@ -59,6 +60,8 @@ namespace Notari
             _syllableCts.Dispose();
             _rhymeSchemeCts.Cancel();
             _rhymeSchemeCts.Dispose();
+            _hoverCts.Cancel();
+            _hoverCts.Dispose();
             await _db.DisposeAsync();
             _hoverTimer.Stop();
             _hoverTimer.Tick -= OnHoverTimerTick;
