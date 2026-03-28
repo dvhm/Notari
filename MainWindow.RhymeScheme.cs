@@ -70,6 +70,7 @@ namespace Notari
                     return (IReadOnlyList<(double, double, string)>)result;
                 }, ct);
 
+                ct.ThrowIfCancellationRequested();
                 _adorner?.SetRhymeLabels(labeled);
             }
             catch (OperationCanceledException) { }

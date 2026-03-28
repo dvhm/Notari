@@ -83,6 +83,7 @@ namespace Notari
                         .ToList()
                 , ct);
 
+                ct.ThrowIfCancellationRequested();
                 _adorner?.SetGutterEntries(entries);
                 if (_settings.DimBrackets)
                     _adorner?.SetDimRanges(FindBracketRects());
@@ -344,6 +345,7 @@ namespace Notari
                 }, ct);
 
                 await Task.WhenAll(minWait, resultTask);
+                ct.ThrowIfCancellationRequested();
                 LookupSpinner.Visibility = Visibility.Collapsed;
                 var result = resultTask.Result;
 
