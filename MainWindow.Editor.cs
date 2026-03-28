@@ -78,7 +78,7 @@ namespace Notari
                         {
                             var words = _bracketedContent.Replace(s.Text, " ")
                                 .Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)
-                                .Select(w => new string(w.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray()))
+                                .Select(w => CleanWord(w))
                                 .Where(w => w.Length > 0);
                             int syl = words.Sum(w => _db.GetSyllableCount(w) ?? 0);
                             return (s.Y, Syl: syl);
@@ -512,7 +512,7 @@ namespace Notari
             if (!selection.IsEmpty)
             {
                 string raw = selection.Text.Trim().Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
-                return new string(raw.Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+                return CleanWord(raw);
             }
 
             return GetWordAtPointer(selection.Start);
@@ -539,7 +539,7 @@ namespace Notari
             while (end < paraText.Length && !char.IsWhiteSpace(paraText[end]))
                 end++;
 
-            return new string(paraText[start..end].Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+            return CleanWord(paraText[start..end]);
         }
 
         private void OnEditorMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -630,6 +630,27 @@ namespace Notari
                                      && FocusLabel.Visibility == Visibility.Visible
                                         ? Visibility.Visible
                                         : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Strips characters that are not letters, digits, or apostrophes.
+        /// Uses stackalloc for the buffer — zero heap allocation when all chars are already valid.
+        /// </summary>
+        private static string CleanWord(string s)
+        {
+            if (s.Length == 0) return s;
+
+            // Fast path: return the original if nothing needs stripping.
+            bool needsCleaning = false;
+            for (int i = 0; i < s.Length; i++)
+                if (!char.IsLetterOrDigit(s[i]) && s[i] != '\'') { needsCleaning = true; break; }
+            if (!needsCleaning) return s;
+
+            Span<char> buf = s.Length <= 256 ? stackalloc char[s.Length] : new char[s.Length];
+            int len = 0;
+            foreach (char c in s)
+                if (char.IsLetterOrDigit(c) || c == '\'') buf[len++] = c;
+            return new string(buf[..len]);
         }
     }
 }

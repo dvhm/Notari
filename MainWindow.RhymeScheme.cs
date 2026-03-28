@@ -85,7 +85,7 @@ namespace Notari
             var parts = trimmed.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
             for (int i = parts.Length - 1; i >= 0; i--)
             {
-                string cleaned = new string(parts[i].Where(c => char.IsLetterOrDigit(c) || c == '\'').ToArray());
+                string cleaned = CleanWord(parts[i]);
                 if (cleaned.Length > 0) return cleaned.ToLowerInvariant();
             }
             return string.Empty;
