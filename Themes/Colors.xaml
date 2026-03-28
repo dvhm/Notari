@@ -28,6 +28,7 @@
     <!-- Chrome -->
     <Color x:Key="Color.Border">#33FFFFFF</Color>
     <Color x:Key="Color.Divider">#1FFFFFFF</Color>
+    <Color x:Key="Color.Shadow">#FF000000</Color>
 
     <!-- Accent swatches — single source of truth for the settings color picker -->
     <Color x:Key="Color.Swatch.Blue">  #FF4FC3F7</Color>

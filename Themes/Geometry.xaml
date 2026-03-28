@@ -23,4 +23,10 @@
     <sys:Double x:Key="Spacing.XLarge">24</sys:Double>
     <sys:Double x:Key="Spacing.XXLarge">32</sys:Double>
 
+    <!-- Paper — letter-size document canvas dimensions and padding -->
+    <sys:Double  x:Key="Paper.Width">816</sys:Double>
+    <sys:Double  x:Key="Paper.MinHeight">1056</sys:Double>
+    <Thickness   x:Key="Paper.Margin">32</Thickness>
+    <Thickness   x:Key="Paper.Padding">80,72,80,72</Thickness>
+
 </ResourceDictionary>
