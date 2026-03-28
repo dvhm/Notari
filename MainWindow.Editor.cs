@@ -122,7 +122,7 @@ namespace Notari
         internal void ApplySettings(AppSettings s, bool save = true)
         {
             _settings = s;
-            if (save) s.Save();
+            if (save) _ = s.SaveAsync();
 
             _allBrackets = BuildBracketRegex(s);
 

@@ -46,7 +46,7 @@ namespace Notari
             if (!_settings.HasShownStartMessage)
             {
                 _settings.HasShownStartMessage = true;
-                _settings.Save();
+                _ = _settings.SaveAsync();
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
                     () => new Dialogs.StarMessageDialog(this).ShowDialog());
             }

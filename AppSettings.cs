@@ -9,6 +9,8 @@ public sealed class AppSettings
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Notari", "settings.json");
 
+    private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+
     public string AccentColor          { get; set; } = "#FF4FC3F7";
     public bool   HasShownStartMessage { get; set; } = false;
     public bool   DimBrackets    { get; set; } = true;
@@ -38,12 +40,12 @@ public sealed class AppSettings
         return new();
     }
 
-    public void Save()
+    public async Task SaveAsync()
     {
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true }));
+            await File.WriteAllTextAsync(_path, JsonSerializer.Serialize(this, _jsonOptions));
         }
         catch { }
     }
