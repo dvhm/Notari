@@ -23,6 +23,7 @@ namespace Notari
             _statsDebounce.Start();
             SetDirty(true);
             _adornerService.ClearOverlays();
+            RefreshBracketDims();
             if (_vm is not null && SyllableToggle?.IsChecked == true)
                 _ = _vm.UpdateSyllableCountsAsync(_settings);
             if (_vm is not null && RhymeSchemeToggle?.IsChecked == true)
@@ -51,6 +52,7 @@ namespace Notari
             }
 
             _adornerService.SetDimRanges([]);
+            RefreshBracketDims();
             if (SyllableToggle?.IsChecked == true)
                 _ = _vm?.UpdateSyllableCountsAsync(s);
 
@@ -250,10 +252,6 @@ namespace Notari
         private void OnSyllableCountsReady(IReadOnlyList<(double Y, int Syl)> entries)
         {
             _adornerService.SetGutterEntries(entries);
-            if (_settings.DimBrackets)
-                _adornerService.SetDimRanges(_docService.FindBracketRects(_allBrackets));
-            else
-                _adornerService.SetDimRanges([]);
         }
 
         private void OnRhymeSchemeReady(IReadOnlyList<(double Y, double X, string Label)> labels) =>
@@ -276,5 +274,14 @@ namespace Notari
         }
 
         private void OnHoverCleared() => HoverPopup.IsOpen = false;
+
+        private void RefreshBracketDims()
+        {
+            if (_docService is null) return;
+            if (_settings.DimBrackets)
+                _adornerService.SetDimRanges(_docService.FindBracketRects(_allBrackets));
+            else
+                _adornerService.SetDimRanges([]);
+        }
     }
 }
