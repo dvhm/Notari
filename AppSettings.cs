@@ -29,24 +29,41 @@ public sealed class AppSettings
     public bool TypewriterMode          { get; set; } = false;
     public bool ShowDebugLabels         { get; set; } = false;
 
+    /// <summary>
+    /// Loads settings from disk. If the file is missing, returns defaults.
+    /// If the file is present but unreadable or corrupt, renames it to .bak
+    /// (preserving it for diagnostics) and returns defaults.
+    /// </summary>
     public static AppSettings Load()
     {
+        if (!File.Exists(_path)) return new();
+
         try
         {
-            if (File.Exists(_path))
-                return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path)) ?? new();
+            return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path)) ?? new();
         }
-        catch { }
-        return new();
+        catch
+        {
+            // Back up the corrupted file so it doesn't keep blocking load on every launch.
+            try { File.Move(_path, _path + ".bak", overwrite: true); } catch { }
+            return new();
+        }
     }
 
-    public async Task SaveAsync()
+    /// <summary>
+    /// Persists settings to disk. Returns <see langword="false"/> if the write fails.
+    /// </summary>
+    public async Task<bool> SaveAsync()
     {
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
             await File.WriteAllTextAsync(_path, JsonSerializer.Serialize(this, _jsonOptions));
+            return true;
         }
-        catch { }
+        catch
+        {
+            return false;
+        }
     }
 }
