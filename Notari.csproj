@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <Reference Include="PhonKit">
-      <HintPath>..\..\..\Other\phoneticdb\PhonKit\bin\Release\net8.0\PhonKit.dll</HintPath>
+      <HintPath>lib\PhonKit.dll</HintPath>
     </Reference>
   </ItemGroup>
 
