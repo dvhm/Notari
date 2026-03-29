@@ -730,7 +730,7 @@
                     CornerRadius="{StaticResource Radius.Large}"
                     Padding="12,8">
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.5" Color="#000000" Direction="270"/>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.5" Color="{StaticResource Color.Shadow}" Direction="270"/>
                 </Border.Effect>
                 <StackPanel>
                     <TextBlock x:Name="PopupWordLabel"
