@@ -26,7 +26,7 @@ public sealed class DocumentService : IDocumentService
         if (!selection.IsEmpty)
         {
             string raw = selection.Text.Trim()
-                .Split([' ', '\t', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+                .Split([' ', '\t', '\n', '\r', '-'], StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault() ?? string.Empty;
             return _text.CleanWord(raw);
         }
@@ -47,11 +47,11 @@ public sealed class DocumentService : IDocumentService
         int    idx        = Math.Clamp(textBefore.Length, 0, paraText.Length);
 
         int start = idx;
-        while (start > 0 && !char.IsWhiteSpace(paraText[start - 1]))
+        while (start > 0 && !char.IsWhiteSpace(paraText[start - 1]) && paraText[start - 1] != '-')
             start--;
 
         int end = idx;
-        while (end < paraText.Length && !char.IsWhiteSpace(paraText[end]))
+        while (end < paraText.Length && !char.IsWhiteSpace(paraText[end]) && paraText[end] != '-')
             end++;
 
         return _text.CleanWord(paraText[start..end]);
