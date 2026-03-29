@@ -29,4 +29,7 @@
     <Thickness   x:Key="Paper.Margin">32</Thickness>
     <Thickness   x:Key="Paper.Padding">80,72,80,72</Thickness>
 
+    <!-- Gutter — left-side annotation column -->
+    <sys:Double x:Key="Gutter.RightX">72</sys:Double>
+
 </ResourceDictionary>

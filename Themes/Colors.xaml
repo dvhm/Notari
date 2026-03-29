@@ -40,4 +40,16 @@
     <Color x:Key="Color.Swatch.Green"> #FF4CAF50</Color>
     <Color x:Key="Color.Swatch.Cyan">  #FF26C6DA</Color>
 
+    <!-- Rhyme-scheme badge palette — one hue per letter A–J, cycling after 10 -->
+    <Color x:Key="Color.Rhyme.A">#FF4FC3F7</Color>
+    <Color x:Key="Color.Rhyme.B">#FF81C784</Color>
+    <Color x:Key="Color.Rhyme.C">#FFFFB74D</Color>
+    <Color x:Key="Color.Rhyme.D">#FFCE93D8</Color>
+    <Color x:Key="Color.Rhyme.E">#FFEF8389</Color>
+    <Color x:Key="Color.Rhyme.F">#FF4DD0E1</Color>
+    <Color x:Key="Color.Rhyme.G">#FFF06292</Color>
+    <Color x:Key="Color.Rhyme.H">#FFDCE775</Color>
+    <Color x:Key="Color.Rhyme.I">#FF7986CB</Color>
+    <Color x:Key="Color.Rhyme.J">#FFFF8A65</Color>
+
 </ResourceDictionary>

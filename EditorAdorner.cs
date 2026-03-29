@@ -13,8 +13,8 @@ namespace Notari
     /// </summary>
     internal sealed class EditorAdorner : Adorner
     {
-        // Right edge of the left-gutter label — sits 8px before text starts at x=80.
-        private const double GutterRightX = 72.0;
+        // Right edge of the left-gutter label — read from Geometry.xaml at construction time.
+        private readonly double _gutterRightX;
 
         private readonly Typeface _typeface;
         private readonly double   _fontSize;
@@ -24,22 +24,9 @@ namespace Notari
         private readonly Brush    _findMatchBrush;
         private readonly Brush    _findActiveMatchBrush;
         // Colour palette for rhyme badges — one hue per letter, cycling after 10.
-        private static readonly Color[] RhymeColors =
-        [
-            Color.FromRgb(0x4F, 0xC3, 0xF7), // A – sky blue
-            Color.FromRgb(0x81, 0xC7, 0x84), // B – green
-            Color.FromRgb(0xFF, 0xB7, 0x4D), // C – amber
-            Color.FromRgb(0xCE, 0x93, 0xD8), // D – purple
-            Color.FromRgb(0xEF, 0x83, 0x89), // E – rose
-            Color.FromRgb(0x4D, 0xD0, 0xE1), // F – cyan
-            Color.FromRgb(0xF0, 0x62, 0x92), // G – pink
-            Color.FromRgb(0xDC, 0xE7, 0x75), // H – lime
-            Color.FromRgb(0x79, 0x86, 0xCB), // I – indigo
-            Color.FromRgb(0xFF, 0x8A, 0x65), // J – deep orange
-        ];
-
         private static readonly Brush[] _rhymeFgBrushes;
         private static readonly Brush[] _rhymeBgBrushes;
+        private static readonly int     _rhymeColorCount;
 
         private IReadOnlyList<(double Y, int Syllables)>  _gutterEntries  = [];
         private IReadOnlyList<Rect>                       _highlights     = [];
@@ -54,11 +41,24 @@ namespace Notari
 
         static EditorAdorner()
         {
-            _rhymeFgBrushes = new Brush[RhymeColors.Length];
-            _rhymeBgBrushes = new Brush[RhymeColors.Length];
-            for (int i = 0; i < RhymeColors.Length; i++)
+            var res = Application.Current.Resources;
+            // Collect all Color.Rhyme.* keys in declaration order (A, B, C…)
+            var colors = new List<Color>();
+            for (char letter = 'A'; letter <= 'Z'; letter++)
             {
-                var c  = RhymeColors[i];
+                string key = $"Color.Rhyme.{letter}";
+                if (res.Contains(key))
+                    colors.Add((Color)res[key]);
+                else
+                    break;
+            }
+
+            _rhymeColorCount = colors.Count;
+            _rhymeFgBrushes  = new Brush[_rhymeColorCount];
+            _rhymeBgBrushes  = new Brush[_rhymeColorCount];
+            for (int i = 0; i < _rhymeColorCount; i++)
+            {
+                var c  = colors[i];
                 var fg = new SolidColorBrush(c); fg.Freeze();
                 var bg = new SolidColorBrush(Color.FromArgb(0x40, c.R, c.G, c.B)); bg.Freeze();
                 _rhymeFgBrushes[i] = fg;
@@ -71,6 +71,7 @@ namespace Notari
             IsHitTestVisible = false;
 
             var res = Application.Current.Resources;
+            _gutterRightX         = (double)res["Gutter.RightX"];
             _typeface             = new Typeface((FontFamily)res["Font.Primary"], FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
             _fontSize             = (double)res["FontSize.XSmall"];
             _brush                = (Brush)res["Brush.TextSecondary"];
@@ -123,7 +124,7 @@ namespace Notari
             _rhymeFormatted = labels
                 .Select(e =>
                 {
-                    int   idx = (e.Label.Length > 0 ? e.Label[0] - 'A' : 0) % RhymeColors.Length;
+                    int   idx = (e.Label.Length > 0 ? e.Label[0] - 'A' : 0) % _rhymeColorCount;
                     Brush fg  = _rhymeFgBrushes[idx];
                     Brush bg  = _rhymeBgBrushes[idx];
                     var   ft  = new FormattedText(
@@ -172,7 +173,7 @@ namespace Notari
                 dc.DrawRoundedRectangle(_findActiveMatchBrush, null, active, 2, 2);
 
             foreach (var (y, text) in _gutterFormatted)
-                dc.DrawText(text, new Point(GutterRightX - text.Width, y));
+                dc.DrawText(text, new Point(_gutterRightX - text.Width, y));
 
             foreach (var (y, x, text, _, bg) in _rhymeFormatted)
             {
