@@ -83,10 +83,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// </summary>
     public async Task OnSelectionChangedAsync(AppSettings settings, bool highlightEnabled, bool findBarOpen)
     {
-        _lookupCts.Cancel();
-        _lookupCts.Dispose();
-        _lookupCts = new CancellationTokenSource();
-        var ct = _lookupCts.Token;
+        var ct = ReplaceCts(ref _lookupCts);
 
         try
         {
@@ -128,10 +125,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// </summary>
     public async Task UpdateSyllableCountsAsync(AppSettings settings)
     {
-        _syllableCts.Cancel();
-        _syllableCts.Dispose();
-        _syllableCts = new CancellationTokenSource();
-        var ct = _syllableCts.Token;
+        var ct = ReplaceCts(ref _syllableCts);
 
         try
         {
@@ -165,10 +159,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// </summary>
     public async Task UpdateRhymeSchemeAsync()
     {
-        _rhymeSchemeCts.Cancel();
-        _rhymeSchemeCts.Dispose();
-        _rhymeSchemeCts = new CancellationTokenSource();
-        var ct = _rhymeSchemeCts.Token;
+        var ct = ReplaceCts(ref _rhymeSchemeCts);
 
         try
         {
@@ -205,10 +196,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// <summary>Fetches phonetics for <paramref name="word"/> and fires <see cref="HoverReady"/>.</summary>
     public async Task OnHoverWordAsync(string word)
     {
-        _hoverCts.Cancel();
-        _hoverCts.Dispose();
-        _hoverCts = new CancellationTokenSource();
-        var ct = _hoverCts.Token;
+        var ct = ReplaceCts(ref _hoverCts);
 
         _hoverWord = word;
 
@@ -292,6 +280,17 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         }
 
         return result;
+    }
+
+    // ── Private helpers ──────────────────────────────────────────────────────
+
+    /// <summary>Cancels and disposes the current CTS, replaces it with a fresh one, and returns its token.</summary>
+    private static CancellationToken ReplaceCts(ref CancellationTokenSource cts)
+    {
+        cts.Cancel();
+        cts.Dispose();
+        cts = new CancellationTokenSource();
+        return cts.Token;
     }
 
     // ── INotifyPropertyChanged ────────────────────────────────────────────────

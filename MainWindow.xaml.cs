@@ -15,6 +15,7 @@ namespace Notari
 
         private AppSettings _settings = new();
         private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
+        private EventHandler? _statsDebounceTickHandler;
         private EventHandler? _autoSaveTickHandler;
         private readonly System.Windows.Threading.DispatcherTimer _hoverTimer;
         private System.Windows.Point _hoverPoint;
@@ -56,7 +57,8 @@ namespace Notari
             _vm.PropertyChanged     += OnViewModelPropertyChanged;
 
             InitFindReplace();
-            _statsDebounce.Tick += (_, _) => { _statsDebounce.Stop(); _vm.UpdateDocumentStats(); };
+            _statsDebounceTickHandler = (_, _) => { _statsDebounce.Stop(); _vm.UpdateDocumentStats(); };
+            _statsDebounce.Tick += _statsDebounceTickHandler;
             ApplySettings(_settings, save: false);
 
             if (!_settings.HasShownStartMessage)
@@ -73,6 +75,8 @@ namespace Notari
             _hoverTimer.Stop();
             _hoverTimer.Tick -= OnHoverTimerTick;
             _statsDebounce.Stop();
+            if (_statsDebounceTickHandler is not null)
+                _statsDebounce.Tick -= _statsDebounceTickHandler;
             if (_autoSaveTimer is not null && _autoSaveTickHandler is not null)
                 _autoSaveTimer.Tick -= _autoSaveTickHandler;
             _autoSaveTimer?.Stop();
