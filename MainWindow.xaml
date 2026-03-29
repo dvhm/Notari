@@ -28,6 +28,7 @@
         <CommandBinding Command="local:Commands.ToggleSyllable"    Executed="OnToggleSyllable"/>
         <CommandBinding Command="local:Commands.ToggleRhymeScheme" Executed="OnToggleRhymeScheme"/>
         <CommandBinding Command="local:Commands.ToggleHover"       Executed="OnToggleHover"/>
+        <CommandBinding Command="local:Commands.TakeScreenshot"    Executed="OnTakeScreenshot"/>
     </Window.CommandBindings>
 
     <WindowChrome.WindowChrome>

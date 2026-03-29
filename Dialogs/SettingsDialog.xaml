@@ -198,7 +198,18 @@
                            FontSize="{StaticResource FontSize.XSmall}"
                            Margin="0,0,0,10"/>
 
-                <CheckBox x:Name="ShowDebugLabelsCheck" Content="Show Focus / Hover labels in title bar"/>
+                <CheckBox x:Name="ShowDebugLabelsCheck" Content="Show Focus / Hover labels in title bar" Margin="0,0,0,12"/>
+
+                <TextBlock Text="Screenshot scale"
+                           FontSize="{StaticResource FontSize.Small}"
+                           Margin="0,0,0,6"/>
+                <ComboBox x:Name="ScreenshotScaleBox" Width="160" HorizontalAlignment="Left">
+                    <ComboBoxItem Tag="1"   Content="1× (native)"/>
+                    <ComboBoxItem Tag="1.5" Content="1.5×"/>
+                    <ComboBoxItem Tag="2"   Content="2× (default)"/>
+                    <ComboBoxItem Tag="3"   Content="3×"/>
+                    <ComboBoxItem Tag="4"   Content="4×"/>
+                </ComboBox>
 
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">

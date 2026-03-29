@@ -55,4 +55,8 @@ public static class Commands
     public static readonly RoutedUICommand ToggleHover = new(
         "Toggle Hover Info", nameof(ToggleHover), typeof(Commands),
         [new KeyGesture(Key.D4, ModifierKeys.Alt)]);
+
+    public static readonly RoutedUICommand TakeScreenshot = new(
+        "Take Screenshot", nameof(TakeScreenshot), typeof(Commands),
+        [new KeyGesture(Key.S, ModifierKeys.Alt)]);
 }

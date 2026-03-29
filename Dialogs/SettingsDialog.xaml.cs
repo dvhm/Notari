@@ -62,6 +62,7 @@ public partial class SettingsDialog : Window
         SelectByTag(AutoSaveIntervalBox,  current.AutoSaveIntervalSeconds, fallbackIndex: 2);
 
         ShowDebugLabelsCheck.IsChecked = current.ShowDebugLabels;
+        SelectByTagDouble(ScreenshotScaleBox, current.ScreenshotScale, fallbackIndex: 2);
     }
 
     private static string GetSwatchHex(string colorKey) =>
@@ -77,6 +78,21 @@ public partial class SettingsDialog : Window
 
     private static int GetTag(ComboBox box, int fallback) =>
         box.SelectedItem is ComboBoxItem item && int.TryParse(item.Tag as string, out int v) ? v : fallback;
+
+    private static void SelectByTagDouble(ComboBox box, double value, int fallbackIndex)
+    {
+        foreach (ComboBoxItem item in box.Items)
+            if (item.Tag is string s && double.TryParse(s, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out double v) && Math.Abs(v - value) < 0.001)
+            { box.SelectedItem = item; return; }
+        box.SelectedIndex = fallbackIndex;
+    }
+
+    private static double GetTagDouble(ComboBox box, double fallback) =>
+        box.SelectedItem is ComboBoxItem item &&
+        double.TryParse(item.Tag as string, System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture, out double v)
+        ? v : fallback;
 
     protected override void OnSourceInitialized(EventArgs e){
         base.OnSourceInitialized(e);
@@ -117,7 +133,8 @@ public partial class SettingsDialog : Window
             || debounceMs                  != _original.LookupDebounceMs
             || AutoSaveCheck.IsChecked     != _original.AutoSave
             || autoSaveInt                 != _original.AutoSaveIntervalSeconds
-            || ShowDebugLabelsCheck.IsChecked != _original.ShowDebugLabels;
+            || ShowDebugLabelsCheck.IsChecked != _original.ShowDebugLabels
+            || Math.Abs(GetTagDouble(ScreenshotScaleBox, 2.0) - _original.ScreenshotScale) > 0.001;
     }
 
     private void OnOk(object sender, RoutedEventArgs e)
@@ -144,6 +161,7 @@ public partial class SettingsDialog : Window
             LookupDebounceMs        = debounceMs,
             TypewriterMode          = TypewriterModeCheck.IsChecked == true,
             ShowDebugLabels         = ShowDebugLabelsCheck.IsChecked == true,
+            ScreenshotScale         = GetTagDouble(ScreenshotScaleBox, fallback: 2.0),
         };
         DialogResult = true;
         Close();

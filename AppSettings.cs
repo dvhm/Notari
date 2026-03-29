@@ -27,7 +27,8 @@ public sealed class AppSettings
     public bool ShowSemanticSection     { get; set; } = true;
     public int  LookupDebounceMs        { get; set; } = 250;
     public bool TypewriterMode          { get; set; } = false;
-    public bool ShowDebugLabels         { get; set; } = false;
+    public bool   ShowDebugLabels        { get; set; } = false;
+    public double ScreenshotScale        { get; set; } = 2.0;
 
     /// <summary>
     /// Loads settings from disk. If the file is missing, returns defaults.
