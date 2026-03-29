@@ -13,25 +13,29 @@ namespace Notari
         private int    _wordCount = 0;
         private int    _lineCount = 0;
 
-        private AppSettings _settings = new();
+        private AppSettings _settings;
         private System.Windows.Threading.DispatcherTimer? _autoSaveTimer;
         private EventHandler? _statsDebounceTickHandler;
         private EventHandler? _autoSaveTickHandler;
         private readonly System.Windows.Threading.DispatcherTimer _hoverTimer;
         private System.Windows.Point _hoverPoint;
 
-        private readonly ILookupService      _lookupService;
-        private readonly IAdornerService     _adornerService;
+        private readonly ILookupService       _lookupService;
+        private readonly IAdornerService      _adornerService;
         private readonly ITextAnalysisService _textAnalysis;
         private IDocumentService     _docService = null!; // set in OnLoaded
         private MainWindowViewModel  _vm         = null!; // set in OnLoaded
 
-        public MainWindow()
+        public MainWindow(
+            AppSettings          settings,
+            ITextAnalysisService textAnalysis,
+            ILookupService       lookupService,
+            IAdornerService      adornerService)
         {
-            _settings       = AppSettings.Load();
-            _textAnalysis   = new TextAnalysisService();
-            _lookupService  = new LookupService(new PhoneticDatabase());
-            _adornerService = new AdornerService();
+            _settings       = settings;
+            _textAnalysis   = textAnalysis;
+            _lookupService  = lookupService;
+            _adornerService = adornerService;
             _hoverTimer = new System.Windows.Threading.DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(100)
