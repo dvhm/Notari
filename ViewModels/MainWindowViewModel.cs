@@ -219,16 +219,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public void ClearHover()
     {
         _hoverWord = string.Empty;
-        _hoverCts.Cancel();
+        try { _hoverCts.Cancel(); } catch (ObjectDisposedException) { }
         HoverCleared?.Invoke();
     }
 
     public void CancelAll()
     {
-        _lookupCts.Cancel();
-        _syllableCts.Cancel();
-        _rhymeSchemeCts.Cancel();
-        _hoverCts.Cancel();
+        try { _lookupCts.Cancel(); } catch (ObjectDisposedException) { }
+        try { _syllableCts.Cancel(); } catch (ObjectDisposedException) { }
+        try { _rhymeSchemeCts.Cancel(); } catch (ObjectDisposedException) { }
+        try { _hoverCts.Cancel(); } catch (ObjectDisposedException) { }
     }
 
     public async ValueTask DisposeAsync()
