@@ -22,8 +22,12 @@
         <CommandBinding Command="local:Commands.Exit"     Executed="OnExit"/>
         <CommandBinding Command="local:Commands.Settings" Executed="OnSettings"/>
         <CommandBinding Command="local:Commands.About"    Executed="OnAbout"/>
-        <CommandBinding Command="local:Commands.Find"     Executed="OnFind"/>
-        <CommandBinding Command="local:Commands.Replace"  Executed="OnReplace"/>
+        <CommandBinding Command="local:Commands.Find"              Executed="OnFind"/>
+        <CommandBinding Command="local:Commands.Replace"           Executed="OnReplace"/>
+        <CommandBinding Command="local:Commands.ToggleHighlight"   Executed="OnToggleHighlight"/>
+        <CommandBinding Command="local:Commands.ToggleSyllable"    Executed="OnToggleSyllable"/>
+        <CommandBinding Command="local:Commands.ToggleRhymeScheme" Executed="OnToggleRhymeScheme"/>
+        <CommandBinding Command="local:Commands.ToggleHover"       Executed="OnToggleHover"/>
     </Window.CommandBindings>
 
     <WindowChrome.WindowChrome>

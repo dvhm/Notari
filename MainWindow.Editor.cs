@@ -283,5 +283,14 @@ namespace Notari
             else
                 _adornerService.SetDimRanges([]);
         }
+
+        private void OnToggleHighlight(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) =>
+            HighlightToggle.IsChecked = !HighlightToggle.IsChecked;
+
+        private void OnToggleSyllable(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) =>
+            SyllableToggle.IsChecked = !SyllableToggle.IsChecked;
+
+        private void OnToggleHover(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) =>
+            HoverToggle.IsChecked = !HoverToggle.IsChecked;
     }
 }

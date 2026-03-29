@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 
 namespace Notari;
 
@@ -13,6 +14,9 @@ public partial class MainWindow
         }
         _ = _vm.UpdateRhymeSchemeAsync();
     }
+
+    private void OnToggleRhymeScheme(object sender, ExecutedRoutedEventArgs e) =>
+        RhymeSchemeToggle.IsChecked = !RhymeSchemeToggle.IsChecked;
 }
 
 

@@ -39,4 +39,20 @@ public static class Commands
     public static readonly RoutedUICommand Replace = new(
         "Replace", nameof(Replace), typeof(Commands),
         [new KeyGesture(Key.H, ModifierKeys.Control)]);
+
+    public static readonly RoutedUICommand ToggleHighlight = new(
+        "Toggle Highlight", nameof(ToggleHighlight), typeof(Commands),
+        [new KeyGesture(Key.D1, ModifierKeys.Alt)]);
+
+    public static readonly RoutedUICommand ToggleSyllable = new(
+        "Toggle Syllable Counts", nameof(ToggleSyllable), typeof(Commands),
+        [new KeyGesture(Key.D2, ModifierKeys.Alt)]);
+
+    public static readonly RoutedUICommand ToggleRhymeScheme = new(
+        "Toggle Rhyme Scheme", nameof(ToggleRhymeScheme), typeof(Commands),
+        [new KeyGesture(Key.D3, ModifierKeys.Alt)]);
+
+    public static readonly RoutedUICommand ToggleHover = new(
+        "Toggle Hover Info", nameof(ToggleHover), typeof(Commands),
+        [new KeyGesture(Key.D4, ModifierKeys.Alt)]);
 }
