@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
         Title="Settings"
-        SizeToContent="WidthAndHeight"
+        Width="480"
+        Height="420"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
@@ -45,179 +46,238 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </Window.Resources>
-    <ScrollViewer Height="400">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="32"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
 
-            <!-- Custom title bar -->
-            <Border Grid.Row="0"
-            Background="{StaticResource Brush.Surface}"
-            BorderBrush="{StaticResource Brush.Divider}"
-            BorderThickness="0,0,0,1">
-                <Grid>
-                    <TextBlock Text="Settings"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Foreground="{StaticResource Brush.TextSecondary}"
-                       FontSize="{StaticResource FontSize.Small}"
-                       IsHitTestVisible="False"/>
-                    <Button Style="{StaticResource Style.CaptionButton.Close}"
-                    HorizontalAlignment="Right"
-                    Click="OnTitleBarClose">
-                        <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
-                    </Button>
-                </Grid>
+        <Style x:Key="Style.NavButton" TargetType="RadioButton">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="{StaticResource Brush.TextSecondary}"/>
+            <Setter Property="FontSize" Value="{StaticResource FontSize.Small}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bg" Background="Transparent">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle x:Name="AccentBar" Grid.Column="0"
+                                           Fill="{StaticResource Brush.Primary}" Opacity="0"/>
+                                <ContentPresenter Grid.Column="1" VerticalAlignment="Center"
+                                                  Margin="14,0,0,0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource Brush.Surface}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Brush.Primary}"/>
+                                <Setter TargetName="AccentBar" Property="Opacity" Value="1"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource Brush.Surface}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Border Grid.Row="0"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock Text="Settings"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="{StaticResource FontSize.Small}"
+                           IsHitTestVisible="False"/>
+                <Button Style="{StaticResource Style.CaptionButton.Close}"
+                        HorizontalAlignment="Right"
+                        Click="OnTitleBarClose">
+                    <ui:SymbolIcon Symbol="Dismiss" FontSize="11"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main content: nav sidebar + page area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Nav sidebar -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource Brush.SurfaceElevated}"
+                    BorderBrush="{StaticResource Brush.Divider}"
+                    BorderThickness="0,0,1,0">
+                <StackPanel Margin="0,8,0,0">
+                    <RadioButton x:Name="NavAppearance" Content="Appearance" Style="{StaticResource Style.NavButton}" GroupName="Nav" IsChecked="True" Checked="OnNavChanged"/>
+                    <RadioButton x:Name="NavWriting"    Content="Writing"    Style="{StaticResource Style.NavButton}" GroupName="Nav" Checked="OnNavChanged"/>
+                    <RadioButton x:Name="NavSidebar"    Content="Sidebar"    Style="{StaticResource Style.NavButton}" GroupName="Nav" Checked="OnNavChanged"/>
+                    <RadioButton x:Name="NavLookup"     Content="Lookup"     Style="{StaticResource Style.NavButton}" GroupName="Nav" Checked="OnNavChanged"/>
+                    <RadioButton x:Name="NavFiles"      Content="Files"      Style="{StaticResource Style.NavButton}" GroupName="Nav" Checked="OnNavChanged"/>
+                    <RadioButton x:Name="NavDebug"      Content="Debug"      Style="{StaticResource Style.NavButton}" GroupName="Nav" Checked="OnNavChanged"/>
+                </StackPanel>
             </Border>
 
-            <!-- Content -->
-            <StackPanel Grid.Row="1" Margin="24">
+            <!-- Page content -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <Grid Margin="24,20,24,20">
 
-                <!-- ACCENT COLOR section -->
-                <TextBlock Text="ACCENT COLOR"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
+                    <!-- Page: Appearance -->
+                    <StackPanel x:Name="PageAppearance">
+                        <TextBlock Text="ACCENT COLOR"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="Accent color"
+                                   FontSize="{StaticResource FontSize.Small}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="AccentBlue"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Blue}"/>
+                            <RadioButton x:Name="AccentPurple" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Purple}"/>
+                            <RadioButton x:Name="AccentPink"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Pink}"/>
+                            <RadioButton x:Name="AccentRed"    Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Red}"/>
+                            <RadioButton x:Name="AccentOrange" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Orange}"/>
+                            <RadioButton x:Name="AccentYellow" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Yellow}"/>
+                            <RadioButton x:Name="AccentGreen"  Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Green}"/>
+                            <RadioButton x:Name="AccentCyan"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Cyan}"/>
+                        </StackPanel>
 
-                <TextBlock Text="Accent color"
-                   FontSize="{StaticResource FontSize.Small}"
-                   Margin="0,8,0,8"/>
+                        <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="AccentBlue"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Blue}"/>
-                    <RadioButton x:Name="AccentPurple" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Purple}"/>
-                    <RadioButton x:Name="AccentPink"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Pink}"/>
-                    <RadioButton x:Name="AccentRed"    Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Red}"/>
-                    <RadioButton x:Name="AccentOrange" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Orange}"/>
-                    <RadioButton x:Name="AccentYellow" Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Yellow}"/>
-                    <RadioButton x:Name="AccentGreen"  Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Green}"/>
-                    <RadioButton x:Name="AccentCyan"   Style="{StaticResource Style.Swatch}" GroupName="AccentColor" Background="{StaticResource Brush.Swatch.Cyan}"/>
-                </StackPanel>
+                        <TextBlock Text="BRACKET DIMMING"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="DimBracketsCheck" Content="Dim bracketed content" Margin="0,0,0,12"/>
+                        <StackPanel x:Name="BracketTypePanel" Margin="16,0,0,0"
+                                    IsEnabled="{Binding IsChecked, ElementName=DimBracketsCheck}">
+                            <CheckBox x:Name="DimSquareCheck" Content="[ ]  Square brackets" Margin="0,0,0,6"/>
+                            <CheckBox x:Name="DimRoundCheck"  Content="( )  Round brackets"  Margin="0,0,0,6"/>
+                            <CheckBox x:Name="DimCurlyCheck">
+                                <CheckBox.Content>{ }  Curly brackets</CheckBox.Content>
+                            </CheckBox>
+                        </StackPanel>
+                    </StackPanel>
 
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+                    <!-- Page: Writing -->
+                    <StackPanel x:Name="PageWriting" Visibility="Collapsed">
+                        <TextBlock Text="WRITING"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="TypewriterModeCheck" Content="Typewriter mode (keep caret centered)"/>
+                    </StackPanel>
 
-                <!-- BRACKET DIMMING section -->
-                <TextBlock Text="BRACKET DIMMING"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
+                    <!-- Page: Sidebar -->
+                    <StackPanel x:Name="PageSidebar" Visibility="Collapsed">
+                        <TextBlock Text="SIDEBAR"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="ShowNotesCheck"    Content="Show notes"            Margin="0,0,0,6"/>
+                        <CheckBox x:Name="ShowPhoneticCheck" Content="Show phonetic section" Margin="0,0,0,6"/>
+                        <CheckBox x:Name="ShowSemanticCheck" Content="Show semantic section"/>
+                    </StackPanel>
 
-                <CheckBox x:Name="DimBracketsCheck" Content="Dim bracketed content" Margin="0,0,0,12"/>
+                    <!-- Page: Lookup -->
+                    <StackPanel x:Name="PageLookup" Visibility="Collapsed">
+                        <TextBlock Text="LOOKUP"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="SortByZipfCheck" Content="Sort results by frequency" Margin="0,0,0,16"/>
+                        <TextBlock Text="Result limit"
+                                   FontSize="{StaticResource FontSize.Small}"
+                                   Margin="0,0,0,6"/>
+                        <ComboBox x:Name="ResultLimitBox" Width="160" HorizontalAlignment="Left" Margin="0,0,0,16">
+                            <ComboBoxItem Tag="25"  Content="25 results"/>
+                            <ComboBoxItem Tag="50"  Content="50 results"/>
+                            <ComboBoxItem Tag="100" Content="100 results"/>
+                            <ComboBoxItem Tag="0"   Content="Unlimited"/>
+                        </ComboBox>
+                        <TextBlock Text="Lookup delay"
+                                   FontSize="{StaticResource FontSize.Small}"
+                                   Margin="0,0,0,6"/>
+                        <ComboBox x:Name="DebounceBox" Width="160" HorizontalAlignment="Left">
+                            <ComboBoxItem Tag="100" Content="Fast (100ms)"/>
+                            <ComboBoxItem Tag="250" Content="Normal (250ms)"/>
+                            <ComboBoxItem Tag="500" Content="Slow (500ms)"/>
+                        </ComboBox>
+                    </StackPanel>
 
-                <StackPanel x:Name="BracketTypePanel" Margin="16,0,0,0"
-                    IsEnabled="{Binding IsChecked, ElementName=DimBracketsCheck}">
-                    <CheckBox x:Name="DimSquareCheck" Content="[ ]  Square brackets" Margin="0,0,0,6"/>
-                    <CheckBox x:Name="DimRoundCheck"  Content="( )  Round brackets"  Margin="0,0,0,6"/>
-                    <CheckBox x:Name="DimCurlyCheck">
-                        <CheckBox.Content>{ }  Curly brackets</CheckBox.Content>
-                    </CheckBox>
-                </StackPanel>
+                    <!-- Page: Files -->
+                    <StackPanel x:Name="PageFiles" Visibility="Collapsed">
+                        <TextBlock Text="FILES"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="AutoSaveCheck" Content="Enable autosave" Margin="0,0,0,12"/>
+                        <StackPanel x:Name="AutoSaveIntervalPanel" Margin="16,0,0,0"
+                                    IsEnabled="{Binding IsChecked, ElementName=AutoSaveCheck}">
+                            <TextBlock Text="Save interval"
+                                       FontSize="{StaticResource FontSize.Small}"
+                                       Margin="0,0,0,6"/>
+                            <ComboBox x:Name="AutoSaveIntervalBox" Width="160" HorizontalAlignment="Left">
+                                <ComboBoxItem Tag="60"  Content="1 minute"/>
+                                <ComboBoxItem Tag="120" Content="2 minutes"/>
+                                <ComboBoxItem Tag="300" Content="5 minutes"/>
+                                <ComboBoxItem Tag="600" Content="10 minutes"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
 
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
+                    <!-- Page: Debug -->
+                    <StackPanel x:Name="PageDebug" Visibility="Collapsed">
+                        <TextBlock Text="DEBUG"
+                                   Foreground="{StaticResource Brush.TextSecondary}"
+                                   FontSize="{StaticResource FontSize.XSmall}"
+                                   Margin="0,0,0,10"/>
+                        <CheckBox x:Name="ShowDebugLabelsCheck" Content="Show Focus / Hover labels in title bar" Margin="0,0,0,16"/>
+                        <TextBlock Text="Screenshot scale"
+                                   FontSize="{StaticResource FontSize.Small}"
+                                   Margin="0,0,0,6"/>
+                        <ComboBox x:Name="ScreenshotScaleBox" Width="160" HorizontalAlignment="Left">
+                            <ComboBoxItem Tag="1"   Content="1× (native)"/>
+                            <ComboBoxItem Tag="1.5" Content="1.5×"/>
+                            <ComboBoxItem Tag="2"   Content="2× (default)"/>
+                            <ComboBoxItem Tag="3"   Content="3×"/>
+                            <ComboBoxItem Tag="4"   Content="4×"/>
+                        </ComboBox>
+                    </StackPanel>
 
-                <!-- WRITING section -->
-                <TextBlock Text="WRITING"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
-
-                <CheckBox x:Name="TypewriterModeCheck" Content="Typewriter mode (keep caret centered)"/>
-
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
-
-                <!-- SIDEBAR section -->
-                <TextBlock Text="SIDEBAR"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
-
-                <CheckBox x:Name="ShowNotesCheck"     Content="Show notes"            Margin="0,0,0,6"/>
-                <CheckBox x:Name="ShowPhoneticCheck"  Content="Show phonetic section" Margin="0,0,0,6"/>
-                <CheckBox x:Name="ShowSemanticCheck"  Content="Show semantic section"/>
-
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
-
-                <!-- LOOKUP section -->
-                <TextBlock Text="LOOKUP"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
-
-                <CheckBox x:Name="SortByZipfCheck" Content="Sort results by frequency" Margin="0,0,0,12"/>
-
-                <TextBlock Text="Result limit"
-                   FontSize="{StaticResource FontSize.Small}"
-                   Margin="0,0,0,6"/>
-                <ComboBox x:Name="ResultLimitBox" Width="160" HorizontalAlignment="Left" Margin="0,0,0,12">
-                    <ComboBoxItem Tag="25"  Content="25 results"/>
-                    <ComboBoxItem Tag="50"  Content="50 results"/>
-                    <ComboBoxItem Tag="100" Content="100 results"/>
-                    <ComboBoxItem Tag="0"   Content="Unlimited"/>
-                </ComboBox>
-
-                <TextBlock Text="Lookup delay"
-                   FontSize="{StaticResource FontSize.Small}"
-                   Margin="0,0,0,6"/>
-                <ComboBox x:Name="DebounceBox" Width="160" HorizontalAlignment="Left">
-                    <ComboBoxItem Tag="100" Content="Fast (100ms)"/>
-                    <ComboBoxItem Tag="250" Content="Normal (250ms)"/>
-                    <ComboBoxItem Tag="500" Content="Slow (500ms)"/>
-                </ComboBox>
-
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
-
-                <!-- AUTOSAVE section -->
-                <TextBlock Text="AUTOSAVE"
-                   Foreground="{StaticResource Brush.TextSecondary}"
-                   FontSize="{StaticResource FontSize.XSmall}"
-                   Margin="0,0,0,10"/>
-
-                <CheckBox x:Name="AutoSaveCheck" Content="Enable autosave" Margin="0,0,0,12"/>
-
-                <StackPanel x:Name="AutoSaveIntervalPanel" Margin="16,0,0,0"
-                    IsEnabled="{Binding IsChecked, ElementName=AutoSaveCheck}">
-                    <TextBlock Text="Save interval"
-                       FontSize="{StaticResource FontSize.Small}"
-                       Margin="0,0,0,6"/>
-                    <ComboBox x:Name="AutoSaveIntervalBox" Width="160" HorizontalAlignment="Left">
-                        <ComboBoxItem Tag="60"  Content="1 minute"/>
-                        <ComboBoxItem Tag="120" Content="2 minutes"/>
-                        <ComboBoxItem Tag="300" Content="5 minutes"/>
-                        <ComboBoxItem Tag="600" Content="10 minutes"/>
-                    </ComboBox>
-                </StackPanel>
-
-                <Separator Margin="0,16,0,16" Background="{StaticResource Brush.Divider}" Height="1" BorderThickness="0"/>
-
-                <!-- DEBUG section -->
-                <TextBlock Text="DEBUG"
-                           Foreground="{StaticResource Brush.TextSecondary}"
-                           FontSize="{StaticResource FontSize.XSmall}"
-                           Margin="0,0,0,10"/>
-
-                <CheckBox x:Name="ShowDebugLabelsCheck" Content="Show Focus / Hover labels in title bar" Margin="0,0,0,12"/>
-
-                <TextBlock Text="Screenshot scale"
-                           FontSize="{StaticResource FontSize.Small}"
-                           Margin="0,0,0,6"/>
-                <ComboBox x:Name="ScreenshotScaleBox" Width="160" HorizontalAlignment="Left">
-                    <ComboBoxItem Tag="1"   Content="1× (native)"/>
-                    <ComboBoxItem Tag="1.5" Content="1.5×"/>
-                    <ComboBoxItem Tag="2"   Content="2× (default)"/>
-                    <ComboBoxItem Tag="3"   Content="3×"/>
-                    <ComboBoxItem Tag="4"   Content="4×"/>
-                </ComboBox>
-
-                <!-- Buttons -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                    <Button x:Name="BtnCancel" Content="Cancel" Width="90" Margin="0,0,8,0" Click="OnCancel"/>
-                    <Button x:Name="BtnOk"    Content="OK"     Width="90" Style="{StaticResource Style.Button.Accent}" Click="OnOk"/>
-                </StackPanel>
-
-            </StackPanel>
+                </Grid>
+            </ScrollViewer>
         </Grid>
-    </ScrollViewer>
+
+        <!-- Buttons -->
+        <Border Grid.Row="2"
+                Background="{StaticResource Brush.Surface}"
+                BorderBrush="{StaticResource Brush.Divider}"
+                BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,24,0">
+                <Button x:Name="BtnCancel" Content="Cancel" Width="90" Margin="0,0,8,0" Click="OnCancel"/>
+                <Button x:Name="BtnOk"    Content="OK"     Width="90" Style="{StaticResource Style.Button.Accent}" Click="OnOk"/>
+            </StackPanel>
+        </Border>
+    </Grid>
 </Window>

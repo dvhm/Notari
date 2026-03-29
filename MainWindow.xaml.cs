@@ -65,6 +65,17 @@ namespace Notari
             _statsDebounce.Tick += _statsDebounceTickHandler;
             ApplySettings(_settings, save: false);
 
+            // Restore persisted UI state
+            _zoom = Math.Clamp(_settings.Zoom, ZoomMin, ZoomMax);
+            PaperScale.ScaleX = _zoom;
+            PaperScale.ScaleY = _zoom;
+            ZoomLabel.Text    = $"{(int)Math.Round(_zoom * 100)}%";
+            HighlightToggle.IsChecked   = _settings.HighlightEnabled;
+            SyllableToggle.IsChecked    = _settings.SyllableEnabled;
+            RhymeSchemeToggle.IsChecked = _settings.RhymeSchemeEnabled;
+            HoverToggle.IsChecked       = _settings.HoverEnabled;
+            SidebarToggle.IsChecked     = _settings.SidebarOpen;
+
             if (!_settings.HasShownStartMessage)
             {
                 _settings.HasShownStartMessage = true;
@@ -84,6 +95,14 @@ namespace Notari
             if (_autoSaveTimer is not null && _autoSaveTickHandler is not null)
                 _autoSaveTimer.Tick -= _autoSaveTickHandler;
             _autoSaveTimer?.Stop();
+            // Persist UI state before disposing
+            _settings.Zoom               = _zoom;
+            _settings.HighlightEnabled   = HighlightToggle.IsChecked   == true;
+            _settings.SyllableEnabled    = SyllableToggle.IsChecked    == true;
+            _settings.RhymeSchemeEnabled = RhymeSchemeToggle.IsChecked == true;
+            _settings.HoverEnabled       = HoverToggle.IsChecked       == true;
+            _settings.SidebarOpen        = SidebarToggle.IsChecked     == true;
+            await _settings.SaveAsync();
             await _vm.DisposeAsync();
             base.OnClosed(e);
         }

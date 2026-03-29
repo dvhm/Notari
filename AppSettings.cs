@@ -30,6 +30,14 @@ public sealed class AppSettings
     public bool   ShowDebugLabels        { get; set; } = false;
     public double ScreenshotScale        { get; set; } = 2.0;
 
+    // Persisted UI state (auto-saved on close, not shown in settings dialog)
+    public double Zoom               { get; set; } = 1.0;
+    public bool   HighlightEnabled   { get; set; } = false;
+    public bool   SyllableEnabled    { get; set; } = false;
+    public bool   RhymeSchemeEnabled { get; set; } = false;
+    public bool   HoverEnabled       { get; set; } = false;
+    public bool   SidebarOpen        { get; set; } = true;
+
     /// <summary>
     /// Loads settings from disk. If the file is missing, returns defaults.
     /// If the file is present but unreadable or corrupt, renames it to .bak

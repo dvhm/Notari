@@ -94,6 +94,17 @@ public partial class SettingsDialog : Window
             System.Globalization.CultureInfo.InvariantCulture, out double v)
         ? v : fallback;
 
+    private void OnNavChanged(object sender, RoutedEventArgs e)
+    {
+        if (PageAppearance is null) return;
+        PageAppearance.Visibility = NavAppearance.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        PageWriting.Visibility    = NavWriting.IsChecked    == true ? Visibility.Visible : Visibility.Collapsed;
+        PageSidebar.Visibility    = NavSidebar.IsChecked    == true ? Visibility.Visible : Visibility.Collapsed;
+        PageLookup.Visibility     = NavLookup.IsChecked     == true ? Visibility.Visible : Visibility.Collapsed;
+        PageFiles.Visibility      = NavFiles.IsChecked      == true ? Visibility.Visible : Visibility.Collapsed;
+        PageDebug.Visibility      = NavDebug.IsChecked      == true ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     protected override void OnSourceInitialized(EventArgs e){
         base.OnSourceInitialized(e);
         NativeWindowHelper.ApplyRoundedCorners(new WindowInteropHelper(this).Handle);
@@ -146,6 +157,15 @@ public partial class SettingsDialog : Window
 
         Result = new AppSettings
         {
+            // Preserve fields not managed by this dialog
+            HasShownStartMessage = _original.HasShownStartMessage,
+            Zoom                 = _original.Zoom,
+            HighlightEnabled     = _original.HighlightEnabled,
+            SyllableEnabled      = _original.SyllableEnabled,
+            RhymeSchemeEnabled   = _original.RhymeSchemeEnabled,
+            HoverEnabled         = _original.HoverEnabled,
+            SidebarOpen          = _original.SidebarOpen,
+            // Dialog-managed fields
             AccentColor             = selectedAccent,
             DimBrackets             = DimBracketsCheck.IsChecked == true,
             DimSquare               = DimSquareCheck.IsChecked   == true,
