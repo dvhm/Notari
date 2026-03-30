@@ -309,7 +309,15 @@
                              SelectionChanged="OnEditorSelectionChanged"
                              TextChanged="OnEditorTextChanged"
                              MouseMove="OnEditorMouseMove"
-                             MouseLeave="OnEditorMouseLeave"/>
+                             MouseLeave="OnEditorMouseLeave">
+                    <RichTextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="ApplicationCommands.Cut"/>
+                            <MenuItem Command="ApplicationCommands.Copy"/>
+                            <MenuItem Command="ApplicationCommands.Paste"/>
+                        </ContextMenu>
+                    </RichTextBox.ContextMenu>
+                </RichTextBox>
             </Border>
         </ScrollViewer>
 

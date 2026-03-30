@@ -24,17 +24,31 @@ public sealed class LookupService : ILookupService
             static List<Models.WordItem> ToItems(IEnumerable<string> words) =>
                 words.Select(w => new Models.WordItem(w)).ToList();
 
-            var phonetics    = _db.GetPhonetics(word);
-            var rhymes       = ToItems(_db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text));
-            var multi        = ToItems(_db.GetMultisyllabicRhymes(word, limit, sortByZipf).Select(r => r.Text));
-            var assonance    = ToItems(_db.GetAssonance(word, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
+            var phonetics = _db.GetPhonetics(word);
+            ct.ThrowIfCancellationRequested();
+            var rhymes = ToItems(_db.GetRhymes(word, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
+            var multi = ToItems(_db.GetMultisyllabicRhymes(word, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
+            var assonance = ToItems(_db.GetAssonance(word, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
             var alliteration = ToItems(_db.GetAlliteration(word, limit, sortByZipf).Select(r => r.Text));
-            var synGroups    = _posCodes
-                .Select(p => new Models.SynGroup(p.Pos, ToItems(_db.GetSynonyms(word, pos: p.Code, limit: limit, sortByZipf: sortByZipf).Select(r => r.Text))))
-                .Where(g => g.Words.Count > 0)
-                .ToList();
+            ct.ThrowIfCancellationRequested();
+
+            var synGroups = new List<Models.SynGroup>();
+            foreach (var (code, pos) in _posCodes)
+            {
+                ct.ThrowIfCancellationRequested();
+                var syns = ToItems(_db.GetSynonyms(word, pos: code, limit: limit, sortByZipf: sortByZipf).Select(r => r.Text));
+                if (syns.Count > 0) synGroups.Add(new Models.SynGroup(pos, syns));
+            }
+
+            ct.ThrowIfCancellationRequested();
             var antonyms  = ToItems(_db.GetAntonyms(word, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
             var hypernyms = ToItems(_db.GetHypernyms(word, null, limit, sortByZipf).Select(r => r.Text));
+            ct.ThrowIfCancellationRequested();
             var hyponyms  = ToItems(_db.GetHyponyms(word, null, limit, sortByZipf).Select(r => r.Text));
 
             return new LookupResult(word, phonetics, rhymes, multi, assonance, alliteration,

@@ -101,7 +101,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             _adorner.SetHighlights(!findBarOpen && highlightEnabled ? _doc.FindWordRects(word) : []);
 
             IsLookupBusy = true;
-            int limit    = settings.ResultLimit == 0 ? int.MaxValue : settings.ResultLimit;
+            // Cap results to prevent flooding non-virtualized lists; users can raise this in Settings.
+            const int DefaultLimit = 200;
+            int limit = settings.ResultLimit > 0 ? settings.ResultLimit : DefaultLimit;
 
             var minWait    = Task.Delay(500, ct);
             var resultTask = _lookup.LookupWordAsync(word, settings.SortByZipf, limit, ct);
