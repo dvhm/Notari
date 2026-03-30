@@ -161,6 +161,35 @@
         </Setter>
     </Style>
 
+    <!-- ContextMenu -->
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="Background"      Value="{StaticResource Brush.Surface}"/>
+        <Setter Property="Foreground"      Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Brush.Border}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding"         Value="0,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource Radius.Medium}"
+                            Padding="{TemplateBinding Padding}"
+                            MinWidth="200"
+                            SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="16" ShadowDepth="4" Direction="270"/>
+                        </Border.Effect>
+                        <StackPanel IsItemsHost="True"
+                                    Grid.IsSharedSizeScope="True"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Button -->
 
     <!-- Primary (filled) — default for dialog confirm/destructive actions -->
@@ -637,6 +666,29 @@
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel/>
                 </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="Background"       Value="{StaticResource Brush.SurfaceElevated}"/>
+        <Setter Property="Foreground"       Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource Brush.Border}"/>
+        <Setter Property="BorderThickness"  Value="{StaticResource Thickness.Hairline}"/>
+        <Setter Property="FontFamily"       Value="{StaticResource Font.Primary}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FontSize.Small}"/>
+        <Setter Property="Padding"          Value="8,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolTip}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource Radius.Medium}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter/>
+                    </Border>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
