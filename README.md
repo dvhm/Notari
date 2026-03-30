@@ -87,7 +87,13 @@ dotnet run
 
 ## License
 
-GPLv3 — see [LICENSE](LICENSE).
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License v3.0.
+See [LICENSE](LICENSE) for details.
+
+This program depends only on free software components, including:
+- Microsoft.Data.Sqlite (MIT License)
+- FluentIcons.Wpf (MIT License)
 
 ---
 
