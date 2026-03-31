@@ -12,6 +12,12 @@ public partial class AboutDialog : Window
     {
         Owner = owner;
         InitializeComponent();
+
+        var versionFile = System.IO.Path.Combine(AppContext.BaseDirectory, "version.txt");
+        var version = System.IO.File.Exists(versionFile)
+            ? System.IO.File.ReadAllText(versionFile).Trim()
+            : "?";
+        VersionText.Text = $"Notari v{version}";
     }
 
     protected override void OnSourceInitialized(EventArgs e)
